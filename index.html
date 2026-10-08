@@ -188,9 +188,11 @@
          сторона = max(100vw/3, 100vh/2) — сетка центрируется и может
          вылезать за края экрана. Каждая ячейка = 4 треугольника с вершинами
          в центре. Треугольник — маска (clip-path) для картинки из галереи
-         (--ms-img); внутренний слой b (inset -80px) даёт запас для паралакса,
-         сдвиг идёт наружу по направлению: t1 вверх, t2 вправо, t3 вниз,
-         t4 влево. Цвета направлений остаются на i как фон-подложка. ---- */
+         (--ms-img); внутренний слой b (inset -80px) даёт запас для паралакса.
+         Картинка зеркалена поперёк линии от края ячейки к центру (t1/t3 —
+         scaleX(-1), t2/t4 — scaleY(-1)). Паралакс: при движении мыши картинки
+         внутри всех треугольников синхронно едут К точке схождения вершин
+         (t1 вниз, t2 влево, t3 вверх, t4 вправо). ---- */
   #mosaic {
     position: fixed; inset: 0; z-index: 1;
     background: #fbfcfa;
@@ -217,17 +219,17 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    transform: translate(var(--tx, 0px), var(--ty, 0px));
+    transform: translate(var(--tx, 0px), var(--ty, 0px)) var(--flip, scaleX(1));
     will-change: transform;
   }
   .ms-sq .t1 { clip-path: polygon(0 0, 100% 0, 50% 50%); background: #FF9500; }
   .ms-sq .t2 { clip-path: polygon(100% 0, 100% 100%, 50% 50%); background: #0A84FF; }
   .ms-sq .t3 { clip-path: polygon(0 100%, 100% 100%, 50% 50%); background: #34C759; }
   .ms-sq .t4 { clip-path: polygon(0 0, 0 100%, 50% 50%); background: #FFD600; }
-  .ms-sq .t1 b { --ty: calc(-1 * var(--oY)); }
-  .ms-sq .t2 b { --tx: var(--oX); }
-  .ms-sq .t3 b { --ty: var(--oY); }
-  .ms-sq .t4 b { --tx: calc(-1 * var(--oX)); }
+  .ms-sq .t1 b { --ty: var(--oY);      --flip: scaleX(-1); }
+  .ms-sq .t2 b { --tx: calc(-1 * var(--oX)); --flip: scaleY(-1); }
+  .ms-sq .t3 b { --ty: calc(-1 * var(--oY)); --flip: scaleX(-1); }
+  .ms-sq .t4 b { --tx: var(--oX);      --flip: scaleY(-1); }
   #curtain {
     position: fixed; left: 0; top: 0; width: 100%; height: 170vh; z-index: 30;
     background: #000; pointer-events: none;
