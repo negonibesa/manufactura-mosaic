@@ -1,0 +1,1559 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufactura — photo ring — tape (V2)</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #fbfcfa; }
+  canvas { display: block; }
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 45; pointer-events: none;
+    will-change: transform;
+  }
+  #logo img, #logo-dark img { height: 18px; width: 198px; }
+  #logo, #logo-dark {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+  #logo-dark { filter: grayscale(1) invert(1); }
+  .site-nav {
+    position: relative; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 60px; box-sizing: border-box;
+    pointer-events: none; white-space: nowrap;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px; font-weight: 500;
+    line-height: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  /* белый хедер (экран 1) — цвета меню из Figma About */
+  .header-white .site-nav { color: #141414; border-bottom: 1px solid #e0e0e0; }
+  .header-white .site-nav ul { color: #141414; }
+  .header-white .site-nav ul a { color: #141414; }
+  .header-white .site-nav ul a .nav-count { color: #6c6c6c; }
+  .header-white .site-nav ul a:hover { color: #626262; }
+  .header-white .site-nav .cart { color: #141414; }
+  .header-white .site-nav .fave { color: #141414; }
+  .header-white .site-nav .fave .count { background: #FF5A01; }
+  .header-white .site-nav .profile { color: #141414; }
+  /* чёрный хедер (экран 2+) — повышенная специфичность, чтобы перекрыть :nth-правила ниже */
+  .header-dark .site-nav { background: #000; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .header-dark .site-nav ul { color: #fff; }
+  .header-dark .site-nav ul a { color: #fff; }
+  .header-dark .site-nav ul a .nav-count { color: #bbb; }
+  .header-dark .site-nav ul a:hover { color: #bbb; }
+  .header-dark .site-nav .cart { color: #fff; }
+  .header-dark .site-nav .fave { color: #fff; }
+  .header-dark .site-nav .fave .count { background: #FF5A01; }
+  .header-dark .site-nav .profile { color: #fff; }
+  .header-dark .site-nav .fave img,
+  .header-dark .site-nav .profile img { filter: invert(1) !important; }
+  .header-dark .site-nav ul { gap: 56px; }
+  .site-nav ul {
+    display: flex; gap: 56px; margin: 0; padding: 0;
+    list-style: none; color: #141414;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: color 0.4s ease;
+  }
+  .site-nav ul a {
+    color: #141414; text-decoration: none;
+    position: relative; display: inline-block;
+    transition: color 0.4s ease;
+  }
+  .site-nav ul a .nav-count { transition: color 0.4s ease; opacity: 0.7; }
+  /* Ховер-ролл текста: верх копии улетает вверх в маске, снизу в ту же маску
+     поднимается копия. Маска = inline-block, усечённый по высоте строки. */
+  .site-nav ul a .nav-roll {
+    position: relative; display: inline-block; overflow: hidden;
+    vertical-align: bottom; line-height: 18px; height: 18px;
+    pointer-events: none;
+  }
+  .site-nav ul a .nav-roll .nr-in,
+  .site-nav ul a .nav-roll .nr-copy {
+    display: block; height: 18px; line-height: 18px; white-space: nowrap;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .site-nav ul a .nav-roll .nr-copy {
+    position: absolute; left: 0; top: 0;
+    transform: translateY(100%);
+  }
+  .site-nav ul a:hover .nav-roll .nr-in  { transform: translateY(-100%); }
+  .site-nav ul a:hover .nav-roll .nr-copy{ transform: translateY(0); }
+  .site-nav .cart {
+    display: flex; align-items: center; gap: 8px;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease;
+  }
+  .site-nav .nav-end {
+    display: flex; align-items: center; gap: 22px;
+    transition: opacity 0.3s ease;
+  }
+  .site-nav .close-btn {
+    display: none; align-items: center; gap: 6px;
+    color: #ffffff; text-decoration: none; cursor: pointer;
+    pointer-events: auto;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px; font-weight: 500; letter-spacing: 1px;
+  }
+  .site-nav.corridor .nav-end .close-btn {
+    position: fixed; top: 26px; left: 50%; transform: translateX(-50%);
+    z-index: 50;
+  }
+  .site-nav .close-btn svg { display: block; width: 18px; height: 18px; }
+  .site-nav.corridor ul { display: none; }
+  .site-nav.corridor .nav-end .cart,
+  .site-nav.corridor .nav-end .fave,
+  .site-nav.corridor .nav-end .profile { display: none; }
+  .site-nav.corridor .nav-end .close-btn { display: flex; }
+  .site-nav.corridor { background: transparent !important; border-bottom: none !important; }
+  body.in-corridor #logo, body.in-corridor #logo-dark { opacity: 0 !important; pointer-events: none; }
+  body.in-corridor #tagline { opacity: 0 !important; }
+  body.in-corridor #year { opacity: 0 !important; }
+  body.in-corridor #main-title { opacity: 0 !important; }
+  .site-nav .fave {
+    position: relative; display: flex; align-items: center; gap: 8px;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease, filter 0.4s ease;
+  }
+  .site-nav .fave .fave-label {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px; font-weight: 500; line-height: 18px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .site-nav .fave .fave-ic {
+    position: relative; display: block; line-height: 0;
+  }
+  .site-nav .fave .count {
+    position: absolute; top: -4px; right: -4px;
+    width: 6px; height: 6px; box-sizing: border-box;
+    border-radius: 50%; background: #FF5A01;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  .site-nav .profile {
+    display: flex; align-items: center;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease, filter 0.4s ease;
+  }
+  /* тёмный хедер (подмена): задан через .header-dark наверху */
+  .site-nav .fave img,
+  .site-nav .profile img { transition: filter 0.4s ease; }
+  .site-nav .nav { font-family: Spectral, serif; }
+  #main-title {
+    position: fixed; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    z-index: 20; pointer-events: none; white-space: nowrap;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 80pt;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    mix-blend-mode: exclusion;
+  }
+  #main-title .mt-accent {
+    font-family: Spectral, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #6c6c6c;
+  }
+  #main-title { transition: opacity 0.4s ease; }
+  #year {
+    position: fixed; left: 60px; bottom: 14px;
+    z-index: 20; pointer-events: none;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #141414;
+  }
+  #tagline {
+    position: fixed; left: 50%; bottom: 14px; transform: translateX(-50%);
+    z-index: 20; pointer-events: none; white-space: nowrap;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #141414;
+  }
+  body.nav-dark #year { color: #fff; }
+  body.nav-dark #tagline { color: #fff; }
+  body.nav-dark #logo { filter: grayscale(1) invert(1); }
+  #year, #tagline { transition: color 0.4s ease, opacity 0.4s ease; }
+  #logo { transition: filter 0.4s ease; }
+  #curtain {
+    position: fixed; left: 0; top: 0; width: 100%; height: 170vh; z-index: 30;
+    background: #000; pointer-events: none;
+    overflow: hidden;
+    transform: translateY(100vh);
+  }
+  #white-fill {
+    position: fixed; left: 0; top: 0; width: 100%; height: 100vh; z-index: 28;
+    background: #fff; pointer-events: none;
+    transform: translateY(100vh);
+  }
+  #cursor-dot {
+    position: fixed; top: 0; left: 0; z-index: 60;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: exclusion;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #cursor-dot.on { opacity: 1; }
+  #curtain-inner {
+    position: absolute; inset: 0;
+  }
+  #curtain-title {
+    display: block;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    white-space: nowrap;
+    margin-bottom: 4vh;
+    pointer-events: none;
+  }
+  #curtain-title .t-sub {
+    font-family: Spectral, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #6c6c6c;
+  }
+  #curtain-text {
+    position: absolute; left: 60px; top: 38vh;
+    width: 1104px;
+    max-width: calc(100vw - 120px);
+    text-align: left;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 56px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    pointer-events: none;
+  }
+  #curtain-text .it {
+    font-family: Spectral, serif;
+    font-style: italic;
+    font-weight: 500;
+  }
+  #curtain-text .w {
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  #curtain .curtain-photo {
+    position: absolute; left: 50%; top: 82vh;
+    transform: translateX(-50%);
+    width: auto; height: auto;
+    max-width: 64vw; max-height: 64vh;
+    pointer-events: none;
+  }
+  #curtain .curtain-photo img {
+    display: block; width: auto; height: auto;
+    max-width: 64vw; max-height: 64vh;
+  }
+  #curtain .curtain-photo img.cp-b {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    max-width: none; max-height: none;
+    object-fit: fill;
+    transition: opacity 0.22s ease;
+    opacity: 0;
+  }
+  #curtain-about {
+    position: absolute; left: 67.29vw; top: 88vh;
+    width: 261px;
+    color: #fff;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: -0.32px;
+    pointer-events: none;
+  }
+  #curtain-about .a-link {
+    margin-top: 36px;
+  }
+  #curtain-about .a-link .a-arrow {
+    font-family: "Segoe UI Symbol", "Arial Unicode MS", Georgia, serif;
+    font-size: 16px;
+  }
+  @media (max-width: 700px) {
+    #curtain-title { font-size: 32px; white-space: normal; }
+    #curtain-text { left: 24px; top: 6%; width: auto; max-width: calc(100vw - 48px); font-size: 24px; }
+  }
+  /* debug: высоты экранов (для теста скролла) */
+  #debug {
+    position: fixed; left: 60px; right: 60px; bottom: 76px; height: 6px;
+    z-index: 50; pointer-events: none; background: rgba(0,0,0,.08); border-radius: 3px;
+    display: none;
+  }
+  #debug .d-seg { position: absolute; top: 0; height: 100%; border-right: 1px solid rgba(0,0,0,.3); }
+  #debug .d-ring    { background: rgba(120,180,255,.5); }
+  #debug .d-curtain { background: rgba(80,80,80,.4); }
+  #debug .d-content { background: rgba(255,180,80,.4); }
+  #d-cursor { position: absolute; top: -4px; width: 3px; height: 14px; background: #f00; border-radius: 2px; }
+  #debug .d-mark {
+    position: absolute; top: -22px; transform: translateX(-50%);
+    font: 11px/1 monospace; color: #333; background: #fff; padding: 1px 3px;
+    border: 1px solid #999; border-radius: 3px; white-space: nowrap;
+  }
+  #d-value {
+    position: fixed; left: 60px; bottom: 90px; font: 12px/1.4 monospace; color: #c00;
+    background: #fff; padding: 2px 6px; border: 1px solid #c00; border-radius: 3px;
+    z-index: 51; pointer-events: none;
+    display: none;
+  }
+  #stack {
+    position: fixed; left: 50%; top: 50%; width: 0; height: 0;
+    z-index: 29; pointer-events: none;
+  }
+  /* Цельный блок-карточка экрана 3: верхняя линия-бордер, ниже белый фон,
+     на котором фото (слева) и весь контент — название/формат/дата справа
+     колонкой по центру фото. Блок ездит как один элемент стека. */
+  .ecard {
+    position: absolute; left: 0; top: 0;
+    box-sizing: border-box;
+    background: #fff;
+    will-change: transform;
+  }
+  .ecard .poster-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: #e3e3e3;
+    z-index: 20; pointer-events: none;
+  }
+  .ecard .e-wash {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background: #fff;
+    opacity: 0;
+    z-index: 19; pointer-events: none;
+  }
+  .ecard .poster {
+    position: absolute; left: 0; top: 0;
+    display: block;
+    width: min(64vw, calc(64vh * 584 / 814));
+    height: min(64vh, calc(64vw * 814 / 584));
+    object-fit: cover;
+  }
+  .ecrd-info {
+    position: absolute;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 56px; pointer-events: none;
+  }
+  .ecrd-info .ei-title {
+    color: #141414;
+    text-align: right;
+    font-size: 32pt; line-height: 120%; letter-spacing: -0.64px;
+    text-decoration: underline;
+    text-decoration-color: #e3e3e3;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .ecrd-info .ei-title .hn {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 550;
+  }
+  .ecrd-info .ei-title .tn {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 550; font-style: normal;
+  }
+  .ecrd-info .ei-details {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 8px; width: 276px;
+  }
+  .ecrd-info .ei-label {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 16px; line-height: 120%; color: #141414;
+  }
+  .ecrd-info .ei-text {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px; line-height: 120%; color: #141414;
+    text-align: right;
+  }
+  .ecrd-date {
+    position: absolute;
+    pointer-events: none;
+  }
+  .ecrd-date .date-inner {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 76px; line-height: 1; font-weight: 400;
+    color: #141414; white-space: nowrap;
+  }
+
+  .event-title {
+    position: fixed; left: 60px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 77px; line-height: 1; letter-spacing: -2%;
+    z-index: 29; pointer-events: none;
+    height: 154px;
+    opacity: 0;
+  }
+  .event-title.show { opacity: 1; }
+  .event-title .et-first {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; color: #141414;
+    display: block;
+  }
+  .event-title .et-last {
+    font-family: Spectral, serif; font-style: italic; font-weight: 400;
+    color: #6C6C6C;
+    display: block;
+  }
+
+  /* ---- экран 4: Галерея (после афиш/событий) ----
+     Не шторка-оверлей, а продолжение той же страницы: стопка афиш и
+     заголовок «События» уезжают вверх по скроллу, снизу въезжает
+     страница каталога. Панель лежит ПОД стопкой (z ниже), поэтому
+     афиши видны при обратном скролле. */
+  #gallery {
+    position: fixed; left: 0; top: 0; width: 100%; height: 100vh;
+    background: #fff; z-index: 27; pointer-events: none; overflow: hidden;
+  }
+  #gallery.open { pointer-events: auto; }
+  #gallery-page {
+    width: 100%;
+    padding: 0 60px 80px; box-sizing: border-box;
+  }
+  #gallery-title {
+    padding: 60px 0 0;
+    font-size: 77px; line-height: 1; letter-spacing: -2%;
+  }
+  #gallery-title .gt-first {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400; color: #141414;
+  }
+  #gallery-title .gt-last {
+    font-family: Spectral, serif; font-style: italic; font-weight: 400;
+    color: #6C6C6C;
+  }
+  #gallery-grid {
+    margin: 132px 0 0;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px;
+  }
+  .g-card {
+    box-sizing: border-box; background: #fff; margin: 0;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .g-card .g-img-wrap {
+    width: 100%; aspect-ratio: 876 / 578;
+    overflow: hidden; background: #ececea;
+  }
+  .g-card.g-tall .g-img-wrap { aspect-ratio: 876 / 755; }
+  .g-card .g-img {
+    display: block; width: 100%; height: 118%;
+    object-fit: cover; will-change: transform;
+  }
+  .g-card .g-txt {
+    display: flex; flex-direction: column; gap: 12px; align-items: flex-start;
+    align-self: stretch;
+  }
+  .g-card .g-meta {
+    display: flex; align-items: flex-start; gap: 12px; align-self: stretch;
+  }
+  .g-card .g-author {
+    flex: 1 0 0;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 550; font-size: 16px; line-height: 1.2;
+    color: #333;
+  }
+  .g-card .g-art {
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px; font-weight: 550; line-height: 1.3; color: #222;
+  }
+  .g-card .g-det {
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 1px 0 1px 21px;
+    font-family: "HelveticaNeueCyr", "Helvetica Neue Cyr", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px; font-weight: 400; line-height: 1.2; color: #141414;
+    text-align: right;
+  }
+  @media (max-width: 900px) {
+    #gallery-title { font-size: 44px; }
+    #gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; margin-left: 0; }
+    #gallery-page { padding: 0 24px 60px; }
+    .g-card .g-img-wrap { width: 100%; aspect-ratio: 876 / 578; }
+    .g-card.g-tall .g-img-wrap { aspect-ratio: 876 / 755; }
+    .g-card .g-img { width: 100%; height: 118%; }
+  }
+  @media (max-width: 560px) {
+    #gallery-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header header-white">
+  <nav class="site-nav" aria-label="Меню">
+    <ul>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Авторы</span></span><span class="nr-copy"><span class="nav-label">Авторы</span></span></span> <span class="nav-count">(145)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Галерея</span></span><span class="nr-copy"><span class="nav-label">Галерея</span></span></span> <span class="nav-count">(542)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">События</span></span><span class="nr-copy"><span class="nav-label">События</span></span></span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">о&nbsp;проекте</span></span><span class="nr-copy"><span class="nav-label">о&nbsp;проекте</span></span></span></a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="fave" href="#" aria-label="Избранное">
+        <span class="fave-ic"><img src="Favorites.svg" alt="" width="24" height="24"><i class="count"></i></span>
+        <span class="fave-label">Избранное (0)</span>
+      </a>
+      <a class="profile" href="#" aria-label="Профиль">
+        <img src="profile 1.svg" alt="" width="24" height="24">
+      </a>
+      <a class="close-btn" href="#" aria-label="Закрыть">ЗАКРЫТЬ (X)</a>
+    </div>
+  </nav>
+  <div id="logo"><img src="Logo.svg" alt="Мануфактура"></div>
+</header>
+<header class="site-header header-dark">
+  <nav class="site-nav" aria-label="Меню">
+    <ul>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Авторы</span></span><span class="nr-copy"><span class="nav-label">Авторы</span></span></span> <span class="nav-count">(145)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Галерея</span></span><span class="nr-copy"><span class="nav-label">Галерея</span></span></span> <span class="nav-count">(542)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">События</span></span><span class="nr-copy"><span class="nav-label">События</span></span></span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">о&nbsp;проекте</span></span><span class="nr-copy"><span class="nav-label">о&nbsp;проекте</span></span></span></a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="fave" href="#" aria-label="Избранное">
+        <span class="fave-ic"><img src="Favorites.svg" alt="" width="24" height="24"><i class="count"></i></span>
+        <span class="fave-label">Избранное (0)</span>
+      </a>
+      <a class="profile" href="#" aria-label="Профиль">
+        <img src="profile 1.svg" alt="" width="24" height="24">
+      </a>
+      <a class="close-btn" href="#" aria-label="Закрыть">ЗАКРЫТЬ (X)</a>
+    </div>
+  </nav>
+  <div id="logo-dark"><img src="Logo.svg" alt="Мануфактура"></div>
+</header>
+<div id="year">(2026)</div>
+<div id="tagline">Выставки, мастер-классы, коллекция авторских работ.</div>
+<div id="main-title" aria-hidden="true"><span>Художественное&nbsp;</span><span class="mt-accent">пространство</span></div>
+<div id="curtain"><div id="curtain-inner"><div id="curtain-text"><span id="curtain-title">Миссия&nbsp;<span class="t-sub">Мануфактуры</span></span>Мы не&nbsp;конкурируем с&nbsp;онлайн-площадками — мы возвращаем <span class="it">смысл посещения. </span>Мануфактура объединяет просвещение и&nbsp;коллекционирование в&nbsp;одном пространстве, где картину можно <span class="it">рассмотреть,</span> а&nbsp;не&nbsp;пролистать</div><div class="curtain-photo"><img src="Event.png" alt=""><img class="cp-b" src="Event.png" alt=""></div><div id="curtain-about"><div class="a-text">Мануфактура размещается<br> в&nbsp;здании кирпичной фабрики<br> 1751&nbsp;года&nbsp;— там, где&nbsp;когда‑то<br> работали руки ремесленников,<br> теперь работает взгляд.<br> Мы&nbsp;не&nbsp;соперничаем с&nbsp;онлайн-<br> площадками: здесь важно то,<br> что&nbsp;нельзя пролистать&nbsp;— фактура<br> холста, масштаб работы, тишина<br> между&nbsp;экспонатами. Просвещение<br> и&nbsp;коллекционирование существуют<br> в&nbsp;одном пространстве, объединяя<br> тех, кто&nbsp;создаёт, и&nbsp;тех,<br> кто&nbsp;выбирает</div><div class="a-link">О проекте&nbsp;<span class="a-arrow">→</span></div></div></div></div>
+<div id="white-fill"></div>
+<div id="cursor-dot"></div>
+
+<div id="stack" aria-hidden="true"></div>
+<div class="event-title" aria-hidden="true"><span class="et-first">События</span><span class="et-last">мануфактуры</span></div>
+
+<div id="gallery" aria-hidden="true">
+  <div id="gallery-page">
+    <div id="gallery-title"><span class="gt-first">Галерея&nbsp;</span><span class="gt-last">мануфактуры</span></div>
+    <div id="gallery-grid"></div>
+  </div>
+</div>
+
+<div id="debug"><div id="d-cursor"></div></div>
+<div id="d-value">scroll: 0</div>
+
+<script src="three.min.js"></script>
+<script src="images.js"></script>
+<script>
+(function () {
+  const NUM = IMAGE_DATA.length;          // 23 photos from the gallery
+  const GAP_PX = 80;                      // visible gap between cards, in screen px
+  const RING_PX = 0.57;                   // ring radius as share of the smaller viewport edge
+  const ROY = 0.16;                       // auto-rotation speed (rad/s), only in ring mode
+  const TILT = 0.07;                      // mouse tilt amplitude
+  const OVERLAY = 0.2;                    // white overlay on every card by default
+  const UNFOLD_DIST = 10;                 // scroll units needed to fully unfold the tape
+  const RISE_DIST = 18;                   // экран 2: чёрная шторка (BG) и текст поднимаются
+  const SHOW_DIST = 6;                    // хвост заливки текста после подъёма
+  const CURTAIN_START = 0;                // шторка стартует с самого начала, кольцо разворачивается под ней (наслоение)
+  const STACK_P0 = 21;                    // экран 3: шторка уехала (~20.7) — дальше скролл = наслоение событий
+  const GALLERY_IN = 4;                   // экран 4: скролл-дистанция подъёма белой панели галереи над стопкой
+
+  // --- corridor mode ---
+  let corridorMode = false;
+  let corridorBlend = 0;              // 0 = ring, 1 = corridor
+  let corridorBlendTarget = 0;
+  let corridorDepth = 0;
+  let corridorScroll = 0;
+  let corridorScrollTarget = 0;
+  const CORRIDOR_CARD_GAP = 4;
+  const CORRIDOR_SIDE_SPREAD = 2.3;
+  const CORRIDOR_CAM_Y = 1.7;
+  const CORRIDOR_LOOP = NUM * CORRIDOR_CARD_GAP;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xfbfcfa);
+
+  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 100);
+  camera.position.set(0, 1.5, 14);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  document.body.appendChild(renderer.domElement);
+  renderer.domElement.style.position = 'fixed';
+  renderer.domElement.style.inset = '0';
+  renderer.domElement.style.zIndex = '0';
+  renderer.domElement.style.pointerEvents = 'none';
+  renderer.domElement.style.visibility = new URLSearchParams(location.search).get('skip') ? 'hidden' : 'visible'; // TEMP
+
+  const loader = new THREE.TextureLoader();
+  const ring = new THREE.Group();
+  scene.add(ring);
+
+  // corridor lights (hidden until corridor mode)
+  const corridorLights = [];
+  const CORRIDOR_LIGHT_STEP = 8;
+  const CORRIDOR_LIGHT_LOOP = 40;
+  for (let i = 0; i < 20; i++) {
+    const light = new THREE.PointLight(0xffffff, 0, 26);
+    scene.add(light);
+    corridorLights.push({ light, base: -(i + 1) * CORRIDOR_LIGHT_STEP });
+  }
+  const corridorFog = new THREE.FogExp2(0x050505, 0.05);
+
+  const cards = [];   // { group, wrap, mesh, overlay, ang, aspect, done, lean, off, lift, ovT }
+  let radius = 0;
+  let spacingUnit = 0;                    // card pitch on the tape (world units)
+  let tapeSpan = 0;                       // tape length in world units, set in layout()
+
+  // world units per screen pixel at the plane of the ring
+  const unitPerPx = () => (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / innerHeight;
+
+  // ring radius, card width and tape pitch all computed in screen pixels so the
+  // whole ring fits the window and the gap stays ~GAP_PX
+  function layout() {
+    const upx = unitPerPx();
+    const rPx = RING_PX * Math.min(innerWidth, innerHeight);
+    radius = rPx * upx;
+    const arcPx = (Math.PI * 2 * rPx) / NUM;
+    const wPx = Math.max(60, arcPx - GAP_PX);
+    const w = wPx * upx;
+    spacingUnit = (arcPx + GAP_PX) * upx; // card pitch = card width + gap, keeps the same 80px
+    tapeSpan = NUM * spacingUnit;
+
+    cards.forEach(c => {
+      c.mesh.scale.set(w, w * c.aspect, 1);
+      c.overlay.scale.set(w, w * c.aspect, 1);
+    });
+  }
+  function setAspect(c, aspect, force) {
+    if (c.done && !force) return;
+    c.aspect = aspect;
+    c.done = true;
+    layout();
+  }
+
+  for (let i = 0; i < NUM; i++) {
+    const ang = (i / NUM) * Math.PI * 2;
+    const tex = loader.load(IMAGE_DATA[i]);
+    tex.encoding = THREE.sRGBEncoding;
+
+    const group = new THREE.Group();
+    ring.add(group);
+
+    const wrap = new THREE.Group();       // "sticks" toward the cursor on hover
+    group.add(wrap);
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ map: tex, toneMapped: false, side: THREE.DoubleSide })
+    );
+    const overlay = new THREE.Mesh(
+      new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: OVERLAY, side: THREE.DoubleSide })
+    );
+    wrap.add(mesh);
+    wrap.add(overlay);
+
+    const card = { group, wrap, mesh, overlay, ang, aspect: 1, done: false, lean: 0, off: 0, lift: 0, ovT: OVERLAY };
+    cards.push(card);
+
+    const im = tex.image;
+    if (im && im.width) setAspect(card, im.height / im.width, true);
+  }
+  layout();
+
+  // ---- hover via raycast, "stick" like in index.html ----
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  let hoverCard = null;
+
+  function cardUnderPointer(e) {
+    ndc.x = (e.clientX / innerWidth) * 2 - 1;
+    ndc.y = -(e.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(ndc, camera);
+    for (const hit of raycaster.intersectObjects(cards.map(c => c.mesh))) {
+      return cards.find(c => c.mesh === hit.object);
+    }
+    return null;
+  }
+  window.addEventListener('mousemove', (e) => {
+    hoverCard = cardUnderPointer(e);
+  }, { passive: true });
+
+  // mouse tilt: -1..1, smoothed
+  let mx = 0, my = 0, smx = 0, smy = 0;
+  window.addEventListener('mousemove', (e) => {
+    mx = (e.clientX / innerWidth) * 2 - 1;
+    my = (e.clientY / innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  // инерционная точка за курсором (белая, exclusion) — как Obys
+  const cursorDot = document.getElementById('cursor-dot');
+  let dmx = -9999, dmy = -9999, pmx = -9999, pmy = -9999;
+  let dScale = 1, pScale = 1;
+  let cursorVisible = false;
+
+  window.addEventListener('mousemove', (e) => {
+    pmx = e.clientX; pmy = e.clientY;
+    if (!cursorVisible) {
+      cursorVisible = true;
+      cursorDot.classList.add('on');
+      dmx = pmx; dmy = pmy;
+    }
+    // кружок растёт только там, где это уместно (см. underPointer):
+    // над ссылками/меню — нет, над фото афиш и карточками карусели — да.
+    pScale = underPointer();
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => {
+    cursorVisible = false;
+    cursorDot.classList.remove('on');
+  });
+
+  // ---- wheel: инерция колеса вЂ” дельты копим в скорость, скорость затухает ----
+  const SCROLL_MAX = UNFOLD_DIST + RISE_DIST + NUM * 0.5;
+  let scroll = 0, scrollV = 0;             // position + velocity (scroll units/s)
+  const __gs = parseFloat(new URLSearchParams(location.search).get('g'));
+  if (!isNaN(__gs)) { scroll = __gs; scrollV = 0; }   // TEMP debug hook
+  window.__noWebGL = !!new URLSearchParams(location.search).get('noweb'); // TEMP
+  if (window.__noWebGL) renderer.domElement.style.display = 'none'; // TEMP
+  window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (corridorMode) {
+      corridorScrollTarget += e.deltaY * 0.032;
+      if (corridorScrollTarget < 0) corridorScrollTarget = 0;
+      if (corridorScrollTarget > 100000) corridorScrollTarget = 100000;
+      return;
+    }
+    scrollV += e.deltaY * 0.022;            // копим дельты колеса в скорость
+    scrollV *= 0.92;                       // мягкое гашение рывков
+  }, { passive: false });
+
+  // ---- фиста: галерея на фото2 (колесо = смена) ----
+  const GALLERY_COUNT = 23;
+  const WHEEL_STEP = 100;                       // один щелчок колеса (~100px) = 1 смена
+  const galleryEl = document.querySelector('.curtain-photo');
+  const galleryPhotoA = galleryEl ? galleryEl.querySelector('img:not(.cp-b)') : null;
+  const galleryPhotoB = galleryEl ? galleryEl.querySelector('.cp-b') : null;
+  const FADE_MS = 220;
+  let fadeTimer = null;
+  let pendingSrc = null;
+  let activeImg = galleryPhotoA;               // какой слой сейчас видимый
+  const swapPhoto = (src) => {
+    if (!galleryPhotoA || !galleryPhotoB) return;
+    if (fadeTimer) { pendingSrc = src; return; }      // во время фейда — отложим
+    const hidden = activeImg === galleryPhotoA ? galleryPhotoB : galleryPhotoA;
+    hidden.src = src;
+    hidden.style.opacity = '1';                 // новая проявляется ПОВЕРХ старой
+    fadeTimer = setTimeout(() => {
+      activeImg.src = src;                      // старый снизу дополняется до той же
+      hidden.style.opacity = '0';               // старый виден, пустоты нет
+      fadeTimer = null;
+      if (pendingSrc) { const p = pendingSrc; pendingSrc = null; swapPhoto(p); }
+    }, FADE_MS);
+  };
+  const galleryCache = [];
+  for (let gi = 1; gi <= GALLERY_COUNT; gi++) {
+    const im = new Image();
+    im.src = `gallery/${gi}.jpg`;
+    galleryCache.push(im);
+  }
+  let galleryIndex = 0;                        // 0 = исходное Event.png, дальше галерея
+  let wheelAcc = 0;
+  const galleryFiles = [];
+  for (let gi = 1; gi <= GALLERY_COUNT; gi++) galleryFiles.push(`gallery/${gi}.jpg`);
+  const pickRandomGallery = (avoid) => {
+    let n;
+    do { n = 1 + Math.floor(Math.random() * GALLERY_COUNT); } while (n === avoid);
+    return n;
+  };
+  window.addEventListener('wheel', (e) => {
+    if (!galleryPhotoA) return;
+    if (e.deltaY === 0) return;
+    wheelAcc += Math.abs(e.deltaY);
+    const steps = Math.floor(wheelAcc / WHEEL_STEP);
+    if (steps < 1) return;
+    wheelAcc = wheelAcc % WHEEL_STEP;
+    for (let k = 0; k < steps; k++) {
+      galleryIndex = pickRandomGallery(galleryIndex);      // рандомный следующий файл
+    }
+    swapPhoto(galleryFiles[galleryIndex - 1]);
+  }, { passive: true });
+
+  function centerPoster() {
+    const hdr = document.querySelector('.site-header')?.offsetHeight || 0;
+    headerH = hdr;
+    if (stackEl) stackEl.style.top = `calc(50% + ${hdr / 2}px)`;
+    const card = stackCards && stackCards[0];
+    if (!card) return;
+    const p = card.querySelector('.poster');
+    if (!p) return;
+    const pw = p.offsetWidth || 0;
+    const ph = p.offsetHeight || 0;
+    const cx = innerWidth / 2;
+    const blockLeft = cx - pw / 2;          // блок стартует от левого края фото
+    const blockW = innerWidth - 60 - blockLeft;  // до правого поля 60px
+    // Правая колонка (название + формат + дата) центрируется по высоте фото:
+    // измеряем высоты инфо и даты и ставим их друг под другом одной группой.
+    const COL_GAP = 56;                     // воздух между форматом и датой
+    for (const ec of stackCards) {
+      ec.style.width = `${blockW}px`;
+      ec.style.height = `${ph}px`;
+      ec.style.transformOrigin = `${pw / 2}px ${ph / 2}px`;
+      const im = ec.querySelector('.poster');
+      if (im) { im.style.width = `${pw}px`; im.style.height = `${ph}px`; }
+      const inf = ec.querySelector('.ecrd-info');
+      const dt = ec.querySelector('.ecrd-date');
+      if (inf && dt) {
+        inf.style.right = '0';
+        inf.style.top = '120px';            // временно — только для замера высоты
+        inf.style.bottom = 'auto';
+        dt.style.right = '0';
+        dt.style.top = '120px';
+        dt.style.bottom = 'auto';
+        const infoH = inf.offsetHeight || 0;
+        const dateH = dt.offsetHeight || 0;
+        const colTop = Math.max(40, (ph - infoH - COL_GAP - dateH) / 2);
+        inf.style.top = `${colTop}px`;
+        dt.style.top = `${colTop + infoH + COL_GAP}px`;
+      }
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    layout();
+    centerPoster();
+  });
+
+  const logoEl = document.getElementById('logo');
+  const taglineEl = document.getElementById('tagline');
+  const yearEl = document.getElementById('year');
+  const mainTitleEl = document.getElementById('main-title');
+
+  // Ховер-ролл текста в меню реализован чистым CSS (:hover → translateY в маске),
+  // JS тут не нужен.
+
+  // ---- debug: высоты экранов для теста (2 зоны: синяя + вторая) ----
+  const debugEl = document.getElementById('debug');
+  const dCursor = document.getElementById('d-cursor');
+  const DBG_TOTAL = UNFOLD_DIST + RISE_DIST + NUM * 0.5;
+  const dValue = document.getElementById('d-value');
+  const DBG_MARKS = {
+    0: '0',
+    [UNFOLD_DIST]: String(UNFOLD_DIST),
+    [UNFOLD_DIST + RISE_DIST]: String(UNFOLD_DIST + RISE_DIST),
+      };
+  function addMark(at, label) {
+    const m = document.createElement('div');
+    m.className = 'd-mark';
+    m.textContent = label;
+    m.style.left = (at / DBG_TOTAL * 100).toFixed(2) + '%';
+    debugEl.appendChild(m);
+  }
+  (function buildSegs() {
+    const segs = [
+      ['d-ring',   0, UNFOLD_DIST],
+      ['d-curtain', UNFOLD_DIST, RISE_DIST],
+          ];
+    for (const [cls, from, width] of segs) {
+      const s = document.createElement('div');
+      s.className = 'd-seg ' + cls;
+      s.style.left = (from / DBG_TOTAL * 100).toFixed(2) + '%';
+      s.style.width = (width / DBG_TOTAL * 100).toFixed(2) + '%';
+      debugEl.appendChild(s);
+    }
+    for (const at in DBG_MARKS) addMark(+at, DBG_MARKS[at]);
+  })();
+  function updateDebug() {
+    const pct = Math.min(1, scroll / DBG_TOTAL);
+    dCursor.style.left = (pct * 100).toFixed(2) + '%';
+    const rx = (ring.rotation.x * 180 / Math.PI).toFixed(2);
+    const rz = (ring.rotation.z * 180 / Math.PI).toFixed(2);
+    dValue.textContent = `scroll=${scroll.toFixed(1)}  smx=${smx.toFixed(2)} smy=${smy.toFixed(2)}  rotX=${rx}° rotZ=${rz}°  mx=${mx.toFixed(2)} my=${my.toFixed(2)}`;
+  }
+
+  // ---- экран 2: шторка с текстом миссии ----
+  const curtainEl = document.getElementById('curtain');
+  const curtainText = document.getElementById('curtain-text');
+  const whiteFillEl = document.getElementById('white-fill');
+  const headerWhite = document.querySelector('.header-white');
+  const headerDark = document.querySelector('.header-dark');
+  // ---- афиша-стопка (экран 3): цельные блоки-карточки в #stack ----
+  const stackEl = document.getElementById('stack');
+  let headerH = 0;                  // высота шапки — сдвигает и стэк, и остановку фото шторки
+
+  // ---- Данные событий (слайдер экрана 3) ----
+  const EVENTS = [
+    {
+      img: 'Afisha1.jpg',
+      date: '12/02 — 31/07',
+      title: [['«Фестиваль', 'позитивного'], ['идейного', 'искусства»']],
+      format: 'Выставка + встреча с художниками'
+    },
+    {
+      img: 'Afisha2.jpg',
+      date: '08/08 — 31/12',
+      title: [['«Выставка', '+'], ['перфоманс»']],
+      format: 'Выставка, перфоманс, лекции'
+    },
+    {
+      img: 'Afisha3.jpg',
+      date: '15/01 — 30/04',
+      title: [['«Инсталляция', 'и'], ['новые', 'медиа»']],
+      format: 'Экспозиция, саунд-арт, лекции'
+    }
+  ];
+
+  // Висячие союзы: строка не должна заканчиваться союзом (и/в/на/…). Если такой
+  // стоит в конце строки — переносим его в начало следующей.
+  function fixDanglingConjunctions(title) {
+    const out = title.map(line => line.slice());
+    const CONJ = /^(и|а|но|в|во|с|со|к|ко|о|об|до|по|за|на|у|от|из|для|или|же)$/i;
+    for (let i = 0; i < out.length - 1; i++) {
+      const line = out[i];
+      const last = line.length ? line[line.length - 1] : '';
+      if (last && CONJ.test(last)) {
+        line.pop();
+        out[i + 1].unshift(last);
+      }
+    }
+    return out;
+  }
+
+  // Каждая карточка — цельный блок: верхняя линия-бордер, под ней белый фон,
+  // на котором фото (слева) и весь контент (название/формат/дата) справа
+  // колонкой по центру фото. Весь блок ездит как один элемент стека — контент
+  // внутри, без подмены.
+  function buildStackCards() {
+    for (const ev of EVENTS) {
+      const ecard = document.createElement('div');
+      ecard.className = 'ecard';
+      const line = document.createElement('span');
+      line.className = 'poster-line';
+      const img = document.createElement('img');
+      img.className = 'poster';
+      img.src = ev.img;
+      img.alt = '';
+      const info = document.createElement('div');
+      info.className = 'ecrd-info';
+      const it = document.createElement('div');
+      it.className = 'ei-title';
+      const titleLines = fixDanglingConjunctions(ev.title);
+      let wi = 0;
+      it.innerHTML = titleLines.map(line =>
+        line.map(w => `<span class="${(wi++) % 2 ? 'tn' : 'hn'}">${w}</span>`).join(' ')
+      ).join('<br>');
+      const det = document.createElement('div');
+      det.className = 'ei-details';
+      const lab = document.createElement('div');
+      lab.className = 'ei-label';
+      lab.textContent = 'Формат';
+      const txt = document.createElement('div');
+      txt.className = 'ei-text';
+      txt.textContent = ev.format;
+      det.appendChild(lab);
+      det.appendChild(txt);
+      info.appendChild(it);
+      info.appendChild(det);
+      const date = document.createElement('div');
+      date.className = 'ecrd-date';
+      const di = document.createElement('div');
+      di.className = 'date-inner';
+      di.textContent = ev.date;
+      date.appendChild(di);
+      const wash = document.createElement('div');
+      wash.className = 'e-wash';
+      ecard.appendChild(line);
+      ecard.appendChild(wash);
+      ecard.appendChild(img);
+      ecard.appendChild(info);
+      ecard.appendChild(date);
+      stackEl.appendChild(ecard);
+    }
+  }
+  buildStackCards();
+  const stackCards = Array.from(stackEl.querySelectorAll('.ecard'));  // [0] = первое событие
+  const eventTitle = document.querySelector('.event-title');
+  let titleShown = false;  // реально ли заголовок-раздел сейчас показан
+
+  // ---- Галерея (экран 4): сетка каталога по Figma Gallery ----
+  const gPane = document.getElementById('gallery');
+  const galleryGrid = document.getElementById('gallery-grid');
+  const galleryPage = document.getElementById('gallery-page');
+  const GALLERY_ITEMS = [
+    { author: 'Полина Штерн', art: 'Малаховский механик Митя', details: '75×55, 2019 · Графика', tall: true },
+    { author: 'Алексей Красовский', art: 'Золотая осень', details: '100×80, 2021 · Масло', tall: false },
+    { author: 'Мария Соколова', art: 'Тишина двора', details: '60×45, 2020 · Акварель', tall: false },
+    { author: 'Дмитрий Волков', art: 'Индустриальный пейзаж', details: '120×90, 2022 · Смешанная техника', tall: true }
+  ];
+  // Лёгкий параллакс картинок галереи: коэффициент на карточку (минус = чуть
+  // вниз/вперёд относительно хода страницы, плюс = чуть отстаёт).
+  const G_PARALLAX = [-1, 0.6, 0.35, -0.55];
+  function buildGalleryCards() {
+    if (!galleryGrid) return;
+    for (let i = 0; i < GALLERY_ITEMS.length; i++) {
+      const item = GALLERY_ITEMS[i];
+      const card = document.createElement('figure');
+      card.className = 'g-card' + (item.tall ? ' g-tall' : '');
+      const wrap = document.createElement('div');
+      wrap.className = 'g-img-wrap';
+      const img = document.createElement('img');
+      img.className = 'g-img';
+      img.src = 'gallery/' + (i + 1) + '.jpg';
+      img.alt = item.art;
+      img.dataset.par = String(G_PARALLAX[i % G_PARALLAX.length]);
+      wrap.appendChild(img);
+      const txt = document.createElement('figcaption');
+      txt.className = 'g-txt';
+      const meta = document.createElement('div');
+      meta.className = 'g-meta';
+      const author = document.createElement('div');
+      author.className = 'g-author';
+      author.textContent = item.author;
+      const det = document.createElement('div');
+      det.className = 'g-det';
+      det.textContent = item.details;
+      meta.appendChild(author);
+      meta.appendChild(det);
+      const art = document.createElement('div');
+      art.className = 'g-art';
+      art.textContent = item.art;
+      txt.appendChild(meta);
+      txt.appendChild(art);
+      card.appendChild(wrap);
+      card.appendChild(txt);
+      galleryGrid.appendChild(card);
+    }
+  }
+  buildGalleryCards();
+
+  // Рост кружка под курсором: НЕ растёт над меню/ссылками шапки, растёт над
+  // фото афиш экрана 3 и над карточками кольца (пока экран 1 виден).
+  function underPointer() {
+    const x = pmx, y = pmy;
+    const hdr = document.querySelector('.site-header')?.offsetHeight || 0;
+    if (y <= hdr) return 1;
+    for (const ec of stackCards) {
+      if (getComputedStyle(ec).visibility === 'hidden') continue;
+      const im = ec.querySelector('.poster');
+      if (!im) continue;
+      const r = im.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+    }
+    if (gPane && gPane.classList.contains('open')) {
+      for (const gim of galleryGrid.querySelectorAll('.g-img')) {
+        const r = gim.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+      }
+    }
+    return hoverCard && scroll < UNFOLD_DIST ? 3 : 1;
+  }
+  centerPoster();
+  // Разбиваем текст на слова (неразрывные пробелы не рвём вЂ” предлог едет со словом).
+  const curtainWords = (() => {
+    const words = [];
+    const walker = document.createTreeWalker(curtainText, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {
+      const parts = node.textContent.split(/([ \t\r\n]+)/);
+      const frag = document.createDocumentFragment();
+      for (const part of parts) {
+        if (!part) continue;
+        if (/^[ \t\r\n]+$/.test(part)) {
+          frag.appendChild(document.createTextNode(' '));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.textContent = part;
+          frag.appendChild(s);
+          words.push(s);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    }
+    return words;
+  })();
+  let curtainLines = [];
+  function groupCurtainLines() {
+    curtainLines = [];
+    let cur = null;
+    for (const w of curtainWords) {
+      const top = w.offsetTop;
+      if (!cur || Math.abs(top - cur.top) > 8) {
+        cur = { top, words: [] };
+        curtainLines.push(cur);
+      }
+      cur.words.push(w);
+    }
+  }
+  groupCurtainLines();
+  window.addEventListener('resize', groupCurtainLines);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(groupCurtainLines);
+
+  let last = performance.now();
+  let auto = 0;                            // auto rotation angle (ring mode only)
+
+  // --- corridor enter / exit ---
+  function enterCorridor() {
+    if (corridorMode) return;
+    corridorMode = true;
+    corridorBlendTarget = 1;
+    corridorScroll = 0;
+    corridorScrollTarget = 0;
+    corridorDepth = 0;
+    scene.fog = corridorFog;
+    scene.background = new THREE.Color(0x050505);
+    for (const L of corridorLights) L.light.intensity = 0.55;
+    document.querySelectorAll('.site-nav').forEach(n => n.classList.add('corridor'));
+    document.body.classList.add('in-corridor');
+  }
+  function exitCorridor() {
+    if (!corridorMode) return;
+    corridorMode = false;
+    corridorBlendTarget = 0;
+    corridorScroll = 0;
+    corridorScrollTarget = 0;
+    corridorDepth = 0;
+    scene.fog = null;
+scene.background = new THREE.Color(0xfbfcfa);
+    for (const L of corridorLights) L.light.intensity = 0;
+    document.querySelectorAll('.site-nav').forEach(n => n.classList.remove('corridor'));
+    document.body.classList.remove('in-corridor');
+    scroll = 0;
+    scrollV = 0;
+  }
+
+  // --- click: card → corridor, × → exit ---
+  window.addEventListener('click', (e) => {
+    if (e.target.closest('.close-btn')) { exitCorridor(); return; }
+    if (corridorMode) return;
+    if (scroll > 1) return;
+    if (!hoverCard) return;
+    enterCorridor();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && corridorMode) exitCorridor();
+  });
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    smx += (mx - smx) * (1 - Math.exp(-dt * 4));
+    smy += (my - smy) * (1 - Math.exp(-dt * 4));
+
+    // инерция: скорость затухает, scroll интегрирует скорость (мягкий выкат)
+    scrollV *= Math.exp(-dt * 2.2);          // плавный выкат
+    scroll += scrollV * dt;
+    if (scroll < 0) { scroll = 0; scrollV = 0; }
+    if (scroll > SCROLL_MAX) { scroll = SCROLL_MAX; scrollV = 0; }
+
+    // apply each photo's real proportions once its image has loaded
+    for (const c of cards) {
+      if (!c.done) {
+        const im = c.mesh.material.map.image;
+        if (im && im.width) setAspect(c, im.height / im.width);
+      }
+    }
+
+    const u = Math.min(1, scroll / UNFOLD_DIST);          // 0 = ring, 1 = tape
+    // лента не едет вбок на 2-м экране (скрыта шторкой) вЂ” не тратим работу
+    const tapeX = scroll < UNFOLD_DIST ? 0 : Math.max(0, scroll - UNFOLD_DIST - RISE_DIST);
+    auto += ROY * (1 - u) * dt;              // экран 1: кольцо вращается, наведение не тормозит
+
+    // Лента разворачивается в синей зоне (0..UNFOLD_DIST) — там и рендерим её.
+    // Как только лента развернута и стоит, тяжёлый WebGL-цикл выключаем — канвас
+    // хранит готовый кадр, а скролл после 10 не грузится (нет "падения" скорости).
+    const sceneFade = corridorBlend > 0.01 ? 1 : Math.max(0, Math.min(1, (UNFOLD_DIST - scroll) / 3));
+    renderer.domElement.style.opacity = String(sceneFade);
+    const sceneLive = sceneFade > 0.001 || corridorBlend > 0.001;
+
+    // corridor blend smoothing
+    corridorBlend += (corridorBlendTarget - corridorBlend) * (1 - Math.exp(-dt * 2.5));
+    if (corridorMode) {
+      corridorDepth += (corridorScrollTarget - corridorDepth) * (1 - Math.exp(-dt * 6));
+    }
+    // hide HTML overlays in corridor mode
+    if (corridorBlend > 0.01) {
+      curtainEl.style.opacity = '0';
+      curtainEl.style.pointerEvents = 'none';
+      stackEl.style.opacity = '0';
+      stackEl.style.pointerEvents = 'none';
+      if (eventTitle) eventTitle.style.display = 'none';
+    } else {
+      curtainEl.style.opacity = '';
+      curtainEl.style.pointerEvents = 'none';
+      stackEl.style.opacity = '';
+      stackEl.style.pointerEvents = 'none';
+      if (eventTitle) eventTitle.style.display = '';
+    }
+    if (sceneLive && !window.__noWebGL) {
+      const mid = (NUM - 1) / 2;
+      for (let ci = 0; ci < cards.length; ci++) {
+        const c = cards[ci];
+        // ring position (auto-rotated)
+        const effAng = c.ang + auto;
+        const rx = Math.sin(effAng) * radius;
+        const rz = Math.cos(effAng) * radius;
+        // tape position (centred line, pans sideways)
+        const tx = (c.ang / (Math.PI * 2)) * NUM;           // logical index 0..NUM
+        const px = (tx - mid) * spacingUnit - tapeX;
+        const py = 0;
+
+        // ring/tape position
+        let posX = rx + (px - rx) * u;
+        let posY = py;
+        let posZ = rz + (0 - rz) * u;
+        let rotY = (c.ang + auto) + (0 - (c.ang + auto)) * u;
+
+        // corridor position
+        if (corridorBlend > 0.001) {
+          const side = ci % 2 === 0 ? -1 : 1;
+          const cx = side * CORRIDOR_SIDE_SPREAD;
+          const cy = CORRIDOR_CAM_Y;
+          let cz = -(ci + 1) * CORRIDOR_CARD_GAP;
+          const n = Math.floor((-corridorDepth - cz) / CORRIDOR_LOOP);
+          cz += n * CORRIDOR_LOOP;
+          while (cz + corridorDepth < -30) cz += CORRIDOR_LOOP;
+          while (cz + corridorDepth > 30) cz -= CORRIDOR_LOOP;
+
+          posX = posX + (cx - posX) * corridorBlend;
+          posY = posY + (cy - posY) * corridorBlend;
+          posZ = posZ + (cz - posZ) * corridorBlend;
+          rotY = rotY + (0 - rotY) * corridorBlend;
+        }
+
+        c.group.position.set(posX, posY, posZ);
+        c.group.rotation.y = rotY;
+
+        // hover "stick" — works in both ring and corridor modes
+        const on = c === hoverCard;
+        const k = 1 - Math.exp(-dt * 10);
+        const stickX = corridorBlend > 0.5 ? smx * 0.15 : smx * 0.25;
+        const stickOff = corridorBlend > 0.5 ? smx * 0.18 : smx * 0.3;
+        const stickLift = corridorBlend > 0.5 ? 0.08 : 0.15;
+        c.lean += ((on ? stickX : 0) - c.lean) * k;
+        c.off  += ((on ? stickOff : 0) - c.off) * k;
+        c.lift += ((on ? stickLift : 0) - c.lift) * k;
+        c.ovT  += ((on ? 0 : OVERLAY) - c.ovT) * k;
+        c.wrap.rotation.y = c.lean;
+        c.wrap.position.set(c.off, c.lift, 0);
+        c.overlay.material.opacity = c.ovT;
+      }
+
+      ring.rotation.x = -smy * TILT * (1 - u) * (1 - corridorBlend);
+      ring.rotation.z = smx * TILT * (1 - u) * (1 - corridorBlend);
+      ring.rotation.y = 0;
+
+      // camera: lerp between ring and corridor
+      let camX = smx * 0.6;
+      let camY = 1.5 - smy * 0.5;
+      let camZ = 14;
+      if (corridorBlend > 0.001) {
+        camX = camX + (0 - camX) * corridorBlend;
+        camY = camY + (CORRIDOR_CAM_Y - camY) * corridorBlend;
+        camZ = camZ + (-corridorDepth - camZ) * corridorBlend;
+      }
+      camera.position.set(camX, camY, camZ);
+      if (corridorBlend > 0.5) {
+        camera.lookAt(0, CORRIDOR_CAM_Y, -corridorDepth - 10);
+      } else {
+        camera.lookAt(0, -0.45, 0);
+      }
+
+      // corridor lights follow the camera
+      if (corridorBlend > 0.01) {
+        for (const L of corridorLights) {
+          let lz = L.base + Math.floor((-corridorDepth - L.base) / CORRIDOR_LIGHT_LOOP) * CORRIDOR_LIGHT_LOOP;
+          while (lz + corridorDepth > CORRIDOR_LIGHT_LOOP) lz -= CORRIDOR_LIGHT_LOOP;
+          while (lz + corridorDepth < -CORRIDOR_LIGHT_LOOP) lz += CORRIDOR_LIGHT_LOOP;
+          L.light.position.set(0, CORRIDOR_CAM_Y + 1.3, lz);
+        }
+      }
+    }
+
+    // ---- экран 2: шторка поднимается снизу, текст заливается построчно ----
+    // Стартуем пока кольцо ещё разворачивается (на 60% синей зоны), единый отсчёт для
+    // шторки, текста и заливки — без рывка.
+    // --- единый линейный поток (всё как в синей зоне) ---
+    // Шторка (фон) и текст едут линейно от scroll в постоянной пропорции (×0.7),
+    // никакого ease — одинаковая скорость во всех зонах, без стыков.
+    // --- единый линейный поток: глобальный scroll, каждый слой = p * коэффициент ---
+    // Никаких задержек старта и кусков с разной скоростью — все стартуют вместе и
+    // едут с постоянной (константной) скоростью за итерацию.
+    // --- премиум-скролл: один scroll, каждая вещь = scroll * константа ---
+    // s — просто накопленная прокрутка от старта экрана 2.
+    const s = Math.max(0, scroll - CURTAIN_START);
+
+    // Текст миссии: едет вверх со шторкой, проявляется из фейда в начале прокрутки.
+    curtainText.style.transform = `translateY(${-s * 0.03 * window.innerHeight}px)`;
+    const fadeIn = Math.min(1, Math.max(0, (s - 5) / 3));    // текст проявляется через фейд
+    curtainText.style.opacity = fadeIn;
+
+    // Блок "о проекте": едет и проявляется синхронно с текстом миссии.
+    const aboutEl = document.getElementById('curtain-about');
+    if (aboutEl) {
+      aboutEl.style.transform = `translateY(${-s * 0.03 * window.innerHeight}px)`;
+      aboutEl.style.opacity = fadeIn;
+    }
+
+    // скрываем теглайн и год при появлении шторки
+    const hideUI = Math.min(1, Math.max(0, s / 4));
+    taglineEl.style.opacity = 1 - hideUI;
+    yearEl.style.opacity = 1 - hideUI;
+    if (mainTitleEl) mainTitleEl.style.opacity = 1 - Math.min(1, hideUI * 2);
+
+    // --- два хедера: белый поднимается, уходит за край, там подменяется
+    // чёрным, который плавно (ease-out) падает обратно ---
+    const UP_PX = 120;
+    const up = Math.min(1, Math.max(0, s / 4));            // экран 1 → белый уходит вверх (s 0..4)
+    const down = Math.min(1, Math.max(0, (s - 8) / 3));    // падает когда фон уже полностью чёрный (s 8..11)
+    const easeOut = 1 - (1 - down) * (1 - down);           // ease-out: мягко замедляется книзу
+    const whiteY = -(up * UP_PX);
+    const darkY = -UP_PX * (1 - easeOut);
+    headerWhite.style.transform = `translateY(${whiteY}px)`;
+    headerDark.style.transform = `translateY(${darkY}px)`;
+    // подмена наверху, когда белый скрылся за краем — перекраски не видно
+    const swapped = up >= 1;
+    headerWhite.style.opacity = swapped ? 0 : 1;
+    headerDark.style.visibility = swapped ? 'visible' : 'hidden';
+    headerDark.style.opacity = swapped ? 1 : 0;
+    document.body.classList.toggle('nav-dark', swapped);
+
+    // Шторка (миссия): выезжает снизу и уезжает вверх. Без фейда — только физическое движение.
+    const curtainY = (1.2 - s * 0.14) * window.innerHeight;
+    curtainEl.style.transform = `translateY(${curtainY}px)`;
+
+    // Фото на шторке (фото2): стоит ниже миссии (top:82vh), скроллится вместе
+    // со шторкой. На втором экране (миссия) скрыто. Когда верх фото2 доезжает до
+    // верха фото1 (18vh), оно останавливается — дальше компенсируем уезд шторки и
+    // фото2 стоит на месте, а шторка "стирает" его. Параллакс "было/стало".
+    const curtainPhoto = document.querySelector('.curtain-photo');
+    if (curtainPhoto) {
+      const h = window.innerHeight;
+      const top2 = 0.82 * h + curtainY;          // текущий верх фото2 на экране
+      // Фото шторки останавливается ровно там, где потом встанет афиша (угол-в-угол):
+      // верх = центр экрана + половина шапки − половина высоты фото (та же 64vh/64vw).
+      const ph = Math.min(0.64 * h, 0.64 * window.innerWidth * 814 / 584);
+      const stopTop = h / 2 + headerH / 2 - ph / 2;
+      const shift = top2 < stopTop ? stopTop - top2 : 0;
+      curtainPhoto.style.transform = `translateX(-50%) translateY(${shift}px)`;
+      const show = Math.min(1, Math.max(0, (curtainY < 0 ? -curtainY / (0.30 * h) : 0)));
+      curtainPhoto.style.opacity = String(show);
+    }
+
+    // Белая панель едет ровно за нижним краём шторки — синхронно,
+    // зазора между чёрным и белым быть не может.
+    const curtainBottom = curtainY + 170 * window.innerHeight / 100;
+    whiteFillEl.style.transform = `translateY(${curtainBottom}px)`;
+
+    // Body: чёрный пока шторка на экране, белый когда панель закрыла весь экран
+    document.body.style.background = curtainBottom > 0 ? '#000' : '#fff';
+
+    const v = 0;
+    curtainText.style.color = '#fff';
+    const fillProg = Math.min(1, Math.max(0, (s - 3) / 10));       // заливка стартует чуть раньше
+    {
+      const th = 255 - v;
+      const dim = Math.round(v + (th - v) * 0.3);
+      const full = `rgb(${th},${th},${th})`, dimC = `rgb(${dim},${dim},${dim})`;
+      const M = curtainLines.length;
+      for (let L = 0; L < M; L++) {
+        const line = curtainLines[L];
+        const K = line.words.length;
+        let lp = fillProg * M - L;
+        lp = lp < 0 ? 0 : lp > 1 ? 1 : lp;
+        for (let j = 0; j < K; j++) {
+          const w = line.words[j];
+          let x = lp * (K + 1) - j;
+          x = x < 0 ? 0 : x > 1 ? 1 : x;
+          const pct = ((x * 100) | 0);
+          if (w._pct === pct) continue;
+          w._pct = pct;
+          const inSub = w.closest('.t-sub');
+          const f = inSub ? 'rgb(108,108,108)' : full;
+          const d = inSub ? 'rgb(38,38,38)' : dimC;
+          w.style.backgroundImage = `linear-gradient(to right, ${f} ${pct}%, ${d} ${pct}%)`;
+        }
+      }
+    }
+
+    // ---- Афиша (экран 3): наслоение цельных блоков-карточек, новый блок
+    // поднимается снизу и закрывает текущий целиком (фото + контент вместе) ----
+    {
+      const N = stackCards.length;
+      const appear = Math.min(1, Math.max(0, (s - 8.4) / 3));
+
+      const STEP = 0.07 * window.innerHeight;    // лесенка между слоями (7vh)
+      const lerp = (a, b, t) => a + (b - a) * t;
+
+      const ready = s >= STACK_P0;
+
+      // Точка привязки/поворота блока — центр фото (как раньше центр постера):
+      // левый край фото = левый край блока, линия-бордер по верху фото.
+      const pivot = (el) => {
+        const im = el.querySelector('.poster');
+        return { w: (im && im.offsetWidth) || 0, h: (im && im.offsetHeight) || 0 };
+      };
+
+      if (!ready) {
+        // Первая карточка выезжает на место за скроллом; остальные не всплывают
+        // задником — каждая позже выезжает наслоением в ветке ready ниже.
+        for (let i = 0; i < N; i++) {
+          const el = stackCards[i];
+          const { w, h } = pivot(el);
+          if (i === 0) {
+            const scale = lerp(0.3, 1, appear);
+            const top = lerp(-2 * STEP, 0, appear);
+            const op = lerp(0, 1, appear);
+            el.style.visibility = appear > 0 && op > 0.001 ? 'visible' : 'hidden';
+            el.style.opacity = op.toFixed(3);
+            el.style.zIndex = String(28);
+            el.style.clipPath = 'none';
+            el.style.transition = 'none';
+            el.style.transform = `translate(${-w / 2}px, ${-h / 2 + top}px) scale(${scale.toFixed(4)})`;
+          } else {
+            el.style.visibility = 'hidden';
+            el.style.opacity = '0';
+            el.style.zIndex = String(28 - i);
+            el.style.clipPath = 'none';
+            el.style.transition = 'none';
+            el.style.transform = `translate(${-w / 2}px, ${-h / 2}px) scale(1)`;
+          }
+        }
+      } else {
+        // наслаивание «шторкой», как чёрная шторка выше: новая карточка целиком
+        // поднимается снизу и закрывает текущую, строго за скроллом (линейно).
+        const phase = Math.max(0, s - STACK_P0);
+        const TAIL = 1.0;                     // короткая пауза после ухода шторки
+        const SPAN = 3.5;                     // скролл-дистанция на один акт (линейно, без ease)
+
+        const actIdx = phase < TAIL ? -1 : Math.min(N - 2, Math.floor((phase - TAIL) / SPAN));
+        const ap = actIdx < 0 ? 0 : Math.max(0, Math.min(1, (phase - TAIL - actIdx * SPAN) / SPAN));
+        const outIdx = actIdx;                // последняя уложенная в стопку
+        const inIdx = actIdx + 1;             // новая — подъезжает снизу поверх
+
+        // Зазор между слоями стопки: каждая карточка остаётся на 20px ниже
+        // предыдущей, чтобы сверху выглядывала линия-бордер и край под ней —
+        // видно, что это стопка, а не одна карточка.
+        const STACK_GAP = 20;
+
+        for (let i = 0; i < N; i++) {
+          const el = stackCards[i];
+          const { w, h } = pivot(el);
+          let top = 0, vis = false;
+          if (actIdx < 0) {
+            if (i === 0) { top = 0; vis = true; }        // первое событие стоит
+          } else if (i === inIdx) {
+            top = (1 - ap) * h + inIdx * STACK_GAP;      // шторка: полный блок снизу вверх
+            vis = true;
+          } else if (i <= outIdx) {
+            top = i * STACK_GAP;                         // уже в стопке — с зазором 20px
+            vis = true;
+          }
+          el.style.visibility = vis ? 'visible' : 'hidden';
+          el.style.opacity = '1';
+          el.style.zIndex = String(10 + i + (i === inIdx ? 1 : 0));
+          el.style.clipPath = 'none';
+          el.style.transition = 'none';
+          el.style.transform = `translate(${-w / 2}px, ${-h / 2 + top}px) scale(1)`;
+          // Белая тонировка закрытой карточки: когда новая перекрыла её на
+          // половину (ap >= 0.5), старая затирается белым 0 → 50%, потом остаётся.
+          const we = el.querySelector('.e-wash');
+          if (we) {
+            let wsh = '0';
+            if (actIdx >= 0 && i < inIdx) {
+              wsh = i < outIdx ? '0.5' : (ap <= 0.5 ? 0 : Math.min(0.5, (ap - 0.5) / 0.5 * 0.5)).toFixed(3);
+            }
+            we.style.opacity = wsh;
+          }
+        }
+      }
+      // Заголовок-раздел «События мануфактуры»: появляется когда шторка
+      // реально приоткрыла экран, пропадает когда возвращается.
+      if (eventTitle) {
+        const titleOpen = curtainBottom <= 620;
+        if (titleOpen && !titleShown) {
+          titleShown = true;
+          eventTitle.classList.add('show');
+        } else if (!titleOpen && titleShown) {
+          titleShown = false;
+          eventTitle.classList.remove('show');
+        }
+      }
+      stackEl.style.perspective = '';
+    }
+
+    // ---- Галерея (экран 4): продолжение страницы после стопки афиш ----
+    // Никакой шторки-оверлея над афишами. Когда последняя карточка стека
+    // легла, весь блок «События + стопка» и страница каталога едут вверх
+    // одним сдвигом (как обычный скролл контента). Обратный скролл просто
+    // показывает заголовок «События» и всю стопку снова.
+    if (gPane) {
+      const gEnd = STACK_P0 + 1 + 3.5 * (stackCards.length - 1);  // момент, когда последняя афиша легла
+      const started = s >= gEnd;
+      gPane.style.visibility = started ? 'visible' : 'hidden';
+      if (started) {
+        const rest = Math.max(0, s - gEnd);
+        const budget = Math.max(1, SCROLL_MAX - gEnd);
+        const pan = Math.min(1, rest / budget);
+        const H = Math.max(0, galleryPage ? galleryPage.offsetHeight : 0);
+        const innerH = innerHeight;
+        const gsPx = (innerH - H * pan).toFixed(1);   // вверх → галерея въезжает снизу
+        const stPx = (-H * pan).toFixed(1);           // стопка уезжает вверх
+        if (galleryPage) galleryPage.style.transform = `translateY(${gsPx}px)`;
+        if (stackEl) stackEl.style.transform = `translateY(${stPx}px)`;
+        if (eventTitle) eventTitle.style.transform = `translateY(calc(-50% + ${stPx}px))`;
+        // Лёгкий параллакс: картинки чуть движутся внутри своей рамки, пока
+        // страница едет. Коэффициент у каждой карточки свой (data-par).
+        const gParPx = 26 * pan;
+        for (const im of galleryGrid.querySelectorAll('.g-img')) {
+          const p = parseFloat(im.dataset.par || '0');
+          im.style.transform = `translateY(${(p * gParPx).toFixed(1)}px)`;
+        }
+        gPane.classList.add('open');
+        gPane.setAttribute('aria-hidden', 'false');
+      } else {
+        gPane.classList.remove('open');
+        gPane.setAttribute('aria-hidden', 'true');
+        if (stackEl) stackEl.style.transform = '';
+        if (eventTitle) eventTitle.style.transform = '';
+        if (galleryPage) galleryPage.style.transform = '';
+        for (const im of galleryGrid.querySelectorAll('.g-img')) im.style.transform = '';
+      }
+    }
+
+    updateDebug();
+    if (sceneLive) renderer.render(scene, camera);
+
+    // точка за курсором: плавно догоняет позицию мыши (инерция, как Obys)
+    if (cursorDot.classList.contains('on')) {
+      dmx += (pmx - dmx) * 0.15;
+      dmy += (pmy - dmy) * 0.15;
+      dScale += (pScale - dScale) * 0.15;
+      cursorDot.style.transform = `translate3d(${dmx.toFixed(1)}px, ${dmy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${dScale.toFixed(2)})`;
+    }
+
+    requestAnimationFrame(frame);
+  }
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

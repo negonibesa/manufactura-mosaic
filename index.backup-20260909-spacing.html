@@ -1,0 +1,2417 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manufactura — photo ring — tape (V2)</title>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #fbfcfa; }
+  canvas { display: block; }
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 45; pointer-events: none;
+    will-change: transform;
+  }
+  #logo img, #logo-dark img { height: 18px; width: 198px; }
+  #logo, #logo-dark {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+  #logo-dark { filter: grayscale(1) invert(1); }
+  .site-nav {
+    position: relative; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 60px; box-sizing: border-box;
+    pointer-events: none; white-space: nowrap;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px; font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+  /* белый хедер (экран 1) — цвета меню из Figma About */
+  .header-white .site-nav { color: #141414; border-bottom: 1px solid #e0e0e0; }
+  .header-white .site-nav ul { color: #141414; }
+  .header-white .site-nav ul a { color: #141414; }
+  .header-white .site-nav ul a .nav-count { color: #6c6c6c; }
+  .header-white .site-nav ul a:hover { color: #626262; }
+  .header-white .site-nav .cart { color: #141414; }
+  .header-white .site-nav .fave { color: #141414; }
+  .header-white .site-nav .fave .count { background: #FF5A01; }
+  .header-white .site-nav .profile { color: #141414; }
+  /* чёрный хедер (экран 2+) — повышенная специфичность, чтобы перекрыть :nth-правила ниже */
+  .header-dark .site-nav { background: #000; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.12); }
+  .header-dark .site-nav ul { color: #fff; }
+  .header-dark .site-nav ul a { color: #fff; }
+  .header-dark .site-nav ul a .nav-count { color: #bbb; }
+  .header-dark .site-nav ul a:hover { color: #bbb; }
+  .header-dark .site-nav .cart { color: #fff; }
+  .header-dark .site-nav .fave { color: #fff; }
+  .header-dark .site-nav .fave .count { background: #FF5A01; }
+  .header-dark .site-nav .profile { color: #fff; }
+  .header-dark .site-nav .fave img,
+  .header-dark .site-nav .profile img { filter: invert(1) !important; }
+  .header-dark .site-nav ul { gap: 56px; }
+  .site-nav ul {
+    display: flex; gap: 56px; margin: 0; padding: 0;
+    list-style: none; color: #141414;
+    font-size: 13px;
+    letter-spacing: 0;
+    transition: color 0.4s ease;
+  }
+  .site-nav ul a {
+    color: #141414; text-decoration: none;
+    position: relative; display: inline-block;
+    transition: color 0.4s ease;
+  }
+  .site-nav ul a .nav-count { transition: color 0.4s ease; opacity: 0.7; }
+  /* Ховер-ролл текста: верх копии улетает вверх в маске, снизу в ту же маску
+     поднимается копия. Маска = inline-block, усечённый по высоте строки. */
+  .site-nav ul a .nav-roll {
+    position: relative; display: inline-block; overflow: hidden;
+    vertical-align: bottom; line-height: 18px; height: 18px;
+    pointer-events: none;
+  }
+  .site-nav ul a .nav-roll .nr-in,
+  .site-nav ul a .nav-roll .nr-copy {
+    display: block; height: 18px; line-height: 18px; white-space: nowrap;
+    will-change: transform;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .site-nav ul a .nav-roll .nr-copy {
+    position: absolute; left: 0; top: 0;
+    transform: translateY(100%);
+  }
+  .site-nav ul a:hover .nav-roll .nr-in  { transform: translateY(-100%); }
+  .site-nav ul a:hover .nav-roll .nr-copy{ transform: translateY(0); }
+  .site-nav .cart {
+    display: flex; align-items: center; gap: 8px;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease;
+  }
+  .site-nav .nav-end {
+    display: flex; align-items: center; gap: 22px;
+    transition: opacity 0.3s ease;
+  }
+  .site-nav .close-btn {
+    display: none; align-items: center; gap: 6px;
+    color: #ffffff; text-decoration: none; cursor: pointer;
+    pointer-events: auto;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px; font-weight: 400; letter-spacing: 0;
+  }
+  .site-nav.corridor .nav-end .close-btn {
+    position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 50;
+  }
+  .site-nav .close-btn svg { display: block; width: 18px; height: 18px; }
+  .site-nav.corridor ul { display: none; }
+  .site-nav.corridor .nav-end .cart,
+  .site-nav.corridor .nav-end .fave,
+  .site-nav.corridor .nav-end .profile { display: none; }
+  .site-nav.corridor .nav-end .close-btn { display: flex; }
+  .site-nav.corridor { background: transparent !important; border-bottom: none !important; }
+  body.in-corridor #logo, body.in-corridor #logo-dark { opacity: 0 !important; pointer-events: none; }
+  body.in-corridor #tagline { opacity: 0 !important; }
+  body.in-corridor #year { opacity: 0 !important; }
+  body.in-corridor #main-title { opacity: 0 !important; }
+  .site-nav .fave {
+    position: relative; display: flex; align-items: center; gap: 8px;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease, filter 0.4s ease;
+  }
+  .site-nav .fave .fave-label {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px; font-weight: 400; line-height: 18px;
+    letter-spacing: 0; text-transform: uppercase;
+  }
+  .site-nav .fave .fave-ic {
+    position: relative; display: block; line-height: 0;
+  }
+  .site-nav .fave .count {
+    position: absolute; top: -4px; right: -4px;
+    width: 6px; height: 6px; box-sizing: border-box;
+    border-radius: 50%; background: #FF5A01;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  .site-nav .profile {
+    display: flex; align-items: center;
+    color: #141414; text-decoration: none;
+    transition: color 0.4s ease, filter 0.4s ease;
+  }
+  /* тёмный хедер (подмена): задан через .header-dark наверху */
+  .site-nav .fave img,
+  .site-nav .profile img { transition: filter 0.4s ease; }
+  .site-nav .nav { font-family: Georgia, serif; }
+  #main-title {
+    position: fixed; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    z-index: 20; pointer-events: none; white-space: nowrap;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 80pt;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    mix-blend-mode: exclusion;
+  }
+  #main-title .mt-accent {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #6c6c6c;
+  }
+  #main-title { transition: opacity 0.4s ease; }
+  #year {
+    position: fixed; left: 60px; bottom: 16px;
+    z-index: 20; pointer-events: none;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #141414;
+  }
+  #tagline {
+    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+    z-index: 20; pointer-events: none; white-space: nowrap;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #141414;
+  }
+  body.nav-dark #year { color: #fff; }
+  body.nav-dark #tagline { color: #fff; }
+  body.nav-dark #logo { filter: grayscale(1) invert(1); }
+  #year, #tagline { transition: color 0.4s ease, opacity 0.4s ease; }
+  #logo { transition: filter 0.4s ease; }
+  #curtain {
+    position: fixed; left: 0; top: 0; width: 100%; height: 170vh; z-index: 30;
+    background: #000; pointer-events: none;
+    overflow: hidden;
+    transform: translateY(100vh);
+  }
+  #white-fill {
+    position: fixed; left: 0; top: 0; width: 100%; height: 100vh; z-index: 28;
+    background: #fff; pointer-events: none;
+    transform: translateY(100vh);
+  }
+  #cursor-dot {
+    position: fixed; top: 0; left: 0; z-index: 60;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: exclusion;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #cursor-dot.on { opacity: 1; }
+  #curtain-inner {
+    position: absolute; inset: 0;
+  }
+  #curtain-title {
+    display: block;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    white-space: nowrap;
+    margin-bottom: 4vh;
+    pointer-events: none;
+  }
+  #curtain-title .t-sub {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #6c6c6c;
+  }
+  #curtain-text {
+    position: absolute; left: 60px; top: 38vh;
+    width: 1104px;
+    max-width: calc(100vw - 120px);
+    text-align: left;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    pointer-events: none;
+  }
+  #curtain-text .it {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+  }
+  #curtain-text .w {
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  #curtain .curtain-photo {
+    position: absolute; left: 50%; top: 82vh;
+    transform: translateX(-50%);
+    width: auto; height: auto;
+    max-width: 64vw; max-height: 64vh;
+    pointer-events: none;
+  }
+  #curtain .curtain-photo img {
+    display: block; width: auto; height: auto;
+    max-width: 64vw; max-height: 64vh;
+  }
+  #curtain .curtain-photo img.cp-b {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    max-width: none; max-height: none;
+    object-fit: fill;
+    transition: opacity 0.22s ease;
+    opacity: 0;
+  }
+  #curtain-about {
+    position: absolute; left: 67.29vw; top: 88vh;
+    width: max-content;
+    color: #fff;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    pointer-events: none;
+  }
+  #curtain-about .a-link {
+    margin-top: 40px;
+    font-size: 14px;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(255, 255, 255, 0.5);
+    text-decoration-skip-ink: none;
+    text-underline-position: from-font;
+  }
+  #curtain-about .a-link .a-arrow {
+    display: inline-block;
+    font-family: "Segoe UI Symbol", "Arial Unicode MS", Georgia, serif;
+    font-size: 14px;
+    margin-left: 7px;
+    text-decoration: none;
+  }
+  @media (max-width: 700px) {
+    #curtain-title { font-size: 32px; white-space: normal; }
+    #curtain-text { left: 24px; top: 6%; width: auto; max-width: calc(100vw - 48px); font-size: 24px; }
+  }
+  /* debug: высоты экранов (для теста скролла) */
+  #debug {
+    position: fixed; left: 60px; right: 60px; bottom: 80px; height: 6px;
+    z-index: 50; pointer-events: none; background: rgba(0,0,0,.08); border-radius: 3px;
+    display: none;
+  }
+  #debug .d-seg { position: absolute; top: 0; height: 100%; border-right: 1px solid rgba(0,0,0,.3); }
+  #debug .d-ring    { background: rgba(120,180,255,.5); }
+  #debug .d-curtain { background: rgba(80,80,80,.4); }
+  /* Временная отладочная сетка: 12 колонок из Figma (offset 60, gutter 48) */
+  #debug-grid {
+    position: fixed; inset: 0; z-index: 99999; pointer-events: none;
+    display: none;
+    box-sizing: border-box;
+  }
+  #debug-grid.on {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 48px;
+    padding: 0 60px;
+    margin: 0 auto;
+  }
+  #debug-grid > div {
+    background: rgba(255, 0, 0, 0.08);
+    display: flex; justify-content: center; align-items: flex-start;
+    padding-top: 10px;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 12px; line-height: 1.2;
+    color: rgba(200, 0, 0, 0.55);
+  }
+  #debug .d-content { background: rgba(255,180,80,.4); }
+  #d-cursor { position: absolute; top: -4px; width: 3px; height: 14px; background: #f00; border-radius: 2px; }
+  #debug .d-mark {
+    position: absolute; top: -22px; transform: translateX(-50%);
+    font: 11px/1 monospace; color: #333; background: #fff; padding: 1px 3px;
+    border: 1px solid #999; border-radius: 3px; white-space: nowrap;
+  }
+  #d-value {
+    position: fixed; left: 60px; bottom: 96px; font: 12px/1.4 monospace; color: #c00;
+    background: #fff; padding: 2px 6px; border: 1px solid #c00; border-radius: 3px;
+    z-index: 51; pointer-events: none;
+    display: none;
+  }
+  #stack {
+    position: fixed; left: 50%; top: 50%; width: 0; height: 0;
+    z-index: 29; pointer-events: none;
+  }
+  /* Цельный блок-карточка экрана 3: верхняя линия-бордер, ниже белый фон,
+     на котором фото (слева) и весь контент — название/формат/дата справа
+     колонкой по центру фото. Блок ездит как один элемент стека. */
+  .ecard {
+    position: absolute; left: 0; top: 0;
+    box-sizing: border-box;
+    background: #fff;
+    will-change: transform;
+  }
+  .ecard .poster-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+    background: #e3e3e3;
+    z-index: 20; pointer-events: none;
+  }
+  .ecard .e-wash {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background: #fff;
+    opacity: 0;
+    z-index: 19; pointer-events: none;
+  }
+  .ecard .poster {
+    position: absolute; left: 0; top: 0;
+    display: block;
+    width: min(64vw, calc(64vh * 584 / 814));
+    height: min(64vh, calc(64vw * 814 / 584));
+    object-fit: cover;
+  }
+  .ecrd-info {
+    position: absolute;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 56px; pointer-events: none;
+  }
+  .ecrd-info .ei-title {
+    color: #141414;
+    text-align: right;
+    font-size: 32pt; line-height: 120%; letter-spacing: -0.64px;
+    text-decoration: underline;
+    text-decoration-color: #e3e3e3;
+    text-decoration-thickness: 0.5px;
+    text-underline-offset: 3px;
+  }
+  .ecrd-info .ei-title .hn {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500;
+  }
+  .ecrd-info .ei-title .tn {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-style: normal;
+  }
+  .ecrd-info .ei-details {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 8px; width: 276px;
+  }
+  .ecrd-info .ei-label {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 16px; line-height: 120%; color: #141414;
+  }
+  .ecrd-info .ei-text {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px; line-height: 120%; color: #141414;
+    text-align: right;
+  }
+  .ecrd-date {
+    position: absolute;
+    pointer-events: none;
+  }
+  .ecrd-date .date-inner {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 76px; line-height: 1; font-weight: 400;
+    color: #141414; white-space: nowrap;
+  }
+
+  .event-title {
+    position: fixed; left: 60px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 77px; line-height: 1; letter-spacing: -1px;
+    z-index: 29; pointer-events: none;
+    height: 154px;
+    opacity: 0;
+  }
+  .event-title.show { opacity: 1; }
+  .event-title .et-first {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; color: #141414;
+    display: block;
+  }
+  .event-title .et-last {
+    font-family: Georgia, serif; font-style: italic; font-weight: 400;
+    color: #6C6C6C;
+    display: block;
+  }
+
+  /* ---- экран 4: Галерея (после афиш/событий) ----
+     Не шторка-оверлей, а продолжение той же страницы: стопка афиш и
+     заголовок «События» уезжают вверх по скроллу, снизу въезжает
+     страница каталога. Панель лежит ПОД стопкой (z ниже), поэтому
+     афиши видны при обратном скролле. */
+  #gallery {
+    position: fixed; left: 0; top: 0; width: 100%; height: 100vh;
+    background: #fff; z-index: 27; pointer-events: none; overflow: hidden;
+  }
+  #gallery.open { pointer-events: auto; }
+  /* Лента bg: обычный блок страницы галереи, верхняя часть с параллаксом.
+     margin отрицательный = на всю ширину (компенсирует padding 60px у page).
+     Идёт первым — въезжает в белое пространство под афишами при подъёме. */
+  #gallery-bg {
+    box-sizing: border-box; width: auto;
+    margin: 120px -60px;
+    position: relative; overflow: hidden;
+    aspect-ratio: 16 / 7;
+  }
+  #gallery-bg .bg-img {
+    position: absolute; left: 0; top: -10%; width: 100%; height: 120%;
+    object-fit: cover; will-change: transform;
+  }
+  #gallery-page {
+    width: 100%;
+    padding: 0 60px; box-sizing: border-box;
+  }
+  #gallery-title {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 40px;
+    padding: 64px 0 0;
+    font-size: 77px; line-height: 1; letter-spacing: -2%;
+  }
+  #gallery-title-group { display: flex; align-items: baseline; }
+  #gallery-title .gt-first {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; color: #141414;
+  }
+  #gallery-title .gt-last {
+    font-family: Georgia, serif; font-style: italic; font-weight: 400;
+    color: #6C6C6C;
+  }
+  #gallery-grid {
+    margin: 136px 0 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px;
+  }
+  .g-card {
+    box-sizing: border-box; background: #fff; margin: 0;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .g-card .g-img-wrap {
+    position: relative;
+    width: 100%; aspect-ratio: 876 / 578;
+    overflow: hidden; background: #ececea;
+  }
+  .g-card .g-img {
+    position: absolute; left: 0; top: -9%; width: 100%; height: 118%;
+    object-fit: cover;
+  }
+  /* Ховер — заглушка: серая «стена», на ней картина в рамке (паспарту).
+     Сюда потом подложат отдельные картинки для ховера. */
+  .g-hover {
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    background: #e9e8e5;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .g-card:hover .g-hover { opacity: 1; }
+  .g-card:hover .g-img { opacity: 0; transition: opacity 0.35s ease; }
+  .g-frame {
+    box-sizing: border-box; width: 76%; height: 76%;
+    background: #fff;
+    border: 3px solid #d3d2cd;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    padding: 3%;
+  }
+  .g-hover-img {
+    display: block; width: 100%; height: 100%;
+    object-fit: contain;
+  }
+  /* Ссылка «Больше работ» в правом конце строки заголовка, на его базовой линии.
+   Единый тип с «О проекте» и «Все авторы»: 14px, тонкое подчёркивание */
+  .g-more {
+    flex-shrink: 0; margin: 0;
+    color: #141414;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; font-size: 14px; line-height: 1.2; letter-spacing: 0;
+text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(20, 20, 20, 0.45);
+    text-decoration-skip-ink: none;
+    text-underline-position: from-font;
+    cursor: pointer;
+  }
+  .g-more .a-arrow {
+    display: inline-block;
+    font-family: "Segoe UI Symbol", "Arial Unicode MS", Georgia, serif;
+    font-size: 14px;
+    margin-left: 7px;
+    text-decoration: none;
+  }
+  /* ---- блок «Авторы мануфактуры» (после галереи, продолжение скролла) ----
+     Серый фон как на ховере картин (#e9e8e5), на всю ширину (margin -60 компенсирует
+     паддинг #gallery-page). Контент внутри — на привычных отступах. */
+  #authors {
+    position: relative;
+    margin: 160px -60px 0;
+    padding: 112px 0 120px;
+    background: #e9e8e5;
+  }
+  #authors-title {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px 40px;
+    margin-left: 60px; padding-right: 60px;
+    font-size: 77px; line-height: 1; letter-spacing: -2%;
+  }
+  #authors-title-group { display: flex; align-items: baseline; }
+  #authors-title .at-first {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; color: #141414;
+  }
+  #authors-title .at-last {
+    font-family: Georgia, serif; font-style: italic; font-weight: 400; color: #6C6C6C;
+  }
+  #authors-list {
+    margin-top: 96px;
+    display: flex; flex-direction: column;
+  }
+  /* Ссылка «Все авторы» в правом конце строки заголовка, на его базовой линии.
+   Единый тип с «О проекте» и «Больше работ»: 14px, тонкое подчёркивание */
+  .a-more {
+    flex-shrink: 0; margin: 0; padding: 0;
+    color: #141414;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; font-size: 14px; line-height: 1.2; letter-spacing: 0;
+text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(20, 20, 20, 0.45);
+    text-decoration-skip-ink: none;
+    text-underline-position: from-font;
+    cursor: pointer;
+  }
+  .a-more .a-arrow {
+    display: inline-block;
+    font-family: "Segoe UI Symbol", "Arial Unicode MS", Georgia, serif;
+    font-size: 14px;
+    margin-left: 7px;
+    text-decoration: none;
+  }
+  .a-row {
+    position: relative;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 60px;
+  }
+  .a-row::before {
+    content: '';
+    position: absolute; left: 60px; right: 60px; top: 0;
+    height: 1px; background: #e0e0e0;
+    transition: background-color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-row:first-child::before { display: none; }
+  .a-row::after {
+    content: '';
+    position: absolute; left: 60px; right: 60px; bottom: 0;
+    height: 1px; background: #e0e0e0;
+    transition: background-color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-row:hover::after { background-color: #141414; }
+  .a-id {   /* имя + направление: 3 колонки сетки (414px на 1920) */
+    display: flex; align-items: center; gap: 24px; width: 414px; flex-shrink: 0;
+  }
+  .a-namebox { display: flex; flex-direction: column; gap: 8px; width: 295px; }
+  .a-name {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 18pt; line-height: 1.2; letter-spacing: 0; color: #141414;
+    white-space: nowrap;
+  }
+  .a-field {
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 400; font-size: 14px; line-height: 1.2; color: #828282;
+    white-space: nowrap;
+  }
+  .a-desc {   /* описание автора: навыки/техника в одну строку, ширина 4 колонки (568px на 1920), позиция прежняя */
+    width: 568px; flex-shrink: 0;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 16px; line-height: 1.2; letter-spacing: 0; color: #141414;
+    white-space: nowrap;
+  }
+  .a-works {  /* миниатюры (счётчик теперь лежит на последней превью): ширины 3 колонки (414px на 1920), позиция прежняя */
+    display: flex; align-items: flex-start; justify-content: flex-end;
+    width: 414px; flex-shrink: 0;
+  }
+  .a-thumbs { display: flex; align-items: flex-start; gap: 17px; width: 100%; height: 116px; justify-content: center; }
+  .a-thumb {
+    position: relative;
+    flex-shrink: 0;
+    background: #ececea;
+  }
+  .a-thumb img {
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: 100%;
+    display: block; object-fit: cover;
+    will-change: transform, opacity;
+  }
+  .a-thumb img.a-over {
+    opacity: 0;
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-thumb .thumb-tint {   /* тёмная заливка последней превью под цифрой */
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background: rgba(20, 20, 20, 0.5);
+    pointer-events: none;
+  }
+  .a-count {
+    position: absolute; overflow: hidden;
+    left: 0; top: 50%;
+    width: 100%; height: 29px;
+    transform: translateY(-50%);
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 16pt; line-height: 1.2; letter-spacing: 0; color: #FFF;
+    text-align: center; z-index: 2;
+  }
+  .a-count .ac-in,
+  .a-count .ac-copy {
+    display: block; height: 29px; line-height: 29px; text-align: center;
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-count .ac-copy {
+    position: absolute; left: 0; right: 0; top: 0;
+    transform: translateY(100%);
+  }
+  .a-row:hover .a-count .ac-in   { transform: translateY(-100%); }
+  .a-row:hover .a-count .ac-copy { transform: translateY(0); }
+  .a-mask {
+    position: relative; display: block; overflow: hidden;
+  }
+  .a-mask .mi,
+  .a-mask .mc {
+    display: block;
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-mask .mc {
+    position: absolute; left: 0; right: 0; top: 0;
+    transform: translateY(100%);
+  }
+  .a-row:hover .a-mask .mi { transform: translateY(-100%); }
+  .a-row:hover .a-mask .mc { transform: translateY(0); }
+  /* Аватар перед именем: квадратный, ч/б по умолчанию, на ховере строки цветной */
+  .a-id .a-avatar {
+    width: 48px; height: 48px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .a-id .a-avatar img {
+    display: block; width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(1);
+    transition: filter 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .a-row:hover .a-id .a-avatar img { filter: grayscale(0); }
+  .g-card .g-txt {
+    display: flex; flex-direction: column; gap: 16px; align-items: flex-start;
+    align-self: stretch;
+  }
+  .g-card .g-meta {
+    display: flex; align-items: flex-start; gap: 12px; align-self: stretch;
+  }
+  .g-card .g-author {
+    flex: 1 0 0;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 16px; line-height: 1.2;
+    color: #333;
+  }
+  .g-card .g-art {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 18px; font-weight: 500; line-height: 1.3; color: #222;
+  }
+  .g-card .g-det {
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 1px 0 1px 21px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px; font-weight: 400; line-height: 1.2; color: #828282;
+    text-align: right;
+  }
+  /* ---- Футер (Figma 153:933) ----
+     Полноширинный тёмный блок в конце #gallery-page, выше белого нижнего паддинга. */
+  .site-footer {
+    position: relative; height: 869px; background: #141414;
+    overflow: hidden;
+    margin: 0 -60px;
+  }
+  .foot-hero {
+    position: absolute; left: 50%; top: 204px; margin-left: -221.5px;   /* 443px → центр по X, низ на 869 */
+    width: 443px; height: 665px; overflow: hidden;
+  }
+  /* Слои — всё рисует canvas (многослойное стирание кистью) */
+  .foot-canvas {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block;
+  }
+  .foot-manuf {
+    position: absolute; left: 60px; top: 712px;
+    width: 1800px; height: 157px;
+    transform-origin: 0 0;
+  }
+  .foot-manuf img {
+    position: absolute; display: block;
+  }
+  /* Правый блок: © 2026, контакты, политика — колонка с гепом 124px, от правого края 60px */
+  .foot-right {
+    position: absolute; right: 60px; top: 92px; width: 199px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 148px;
+  }
+  .foot-copy {
+    align-self: stretch; margin: 0;
+    color: #FFF; text-align: right;
+    font-family: Inter, Arial, sans-serif;
+    font-weight: 500; font-size: 20px; line-height: 1.2; letter-spacing: 0;
+  }
+  .foot-meta {
+    width: 100%;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 32px;
+    color: #FFF; text-align: right;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 16px; font-weight: 400; line-height: 1.2;
+  }
+  .foot-meta p { margin: 0; }
+  .foot-meta a {
+    color: #FFF; opacity: 0.5; text-decoration: none;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 16px; font-weight: 400; line-height: 1.2;
+    transition: opacity 0.4s ease;
+  }
+  .foot-meta a:hover { opacity: 1; }
+  .foot-mission {
+    position: absolute; left: 60px; top: 92px; margin: 0;
+    mix-blend-mode: exclusion;
+    color: #6C6C6C;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 30px; font-weight: 400; line-height: 1.2; letter-spacing: -0.6px;
+    text-transform: lowercase; white-space: nowrap;
+  }
+  .foot-mission .mi-w { color: #FFF; }
+  .foot-mission em {
+    color: #6C6C6C;
+    font-family: Georgia, serif; font-style: italic; font-weight: 400;
+  }
+  .foot-privacy {
+    width: 161px;
+    color: #FFF; opacity: 0.5; text-align: right;
+    text-decoration: underline;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px; font-weight: 400; line-height: 1.2;
+    transition: opacity 0.4s ease;
+  }
+  .foot-privacy:hover { opacity: 1; }
+  @media (max-width: 900px) {
+    #gallery-title { font-size: 44px; }
+    #gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; margin-left: 0; }
+    #gallery-page { padding: 0 24px 64px; }
+    .site-footer { margin: 0 -24px; }
+    .g-card .g-img-wrap { position: relative; width: 100%; aspect-ratio: 876 / 578; }
+    .g-card .g-img { position: absolute; left: 0; top: -9%; width: 100%; height: 118%; }
+  }
+  @media (max-width: 560px) {
+    #gallery-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="debug-grid" aria-hidden="true">
+  <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div>
+  <div>7</div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div>
+</div>
+
+<header class="site-header header-white">
+  <nav class="site-nav" aria-label="Меню">
+    <ul>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Авторы</span></span><span class="nr-copy"><span class="nav-label">Авторы</span></span></span> <span class="nav-count">(145)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Галерея</span></span><span class="nr-copy"><span class="nav-label">Галерея</span></span></span> <span class="nav-count">(542)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">События</span></span><span class="nr-copy"><span class="nav-label">События</span></span></span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">о&nbsp;проекте</span></span><span class="nr-copy"><span class="nav-label">о&nbsp;проекте</span></span></span></a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="fave" href="#" aria-label="Избранное">
+        <span class="fave-ic"><img src="Favorites.svg" alt="" width="24" height="24"><i class="count"></i></span>
+        <span class="fave-label">Избранное (0)</span>
+      </a>
+      <a class="profile" href="#" aria-label="Профиль">
+        <img src="profile 1.svg" alt="" width="24" height="24">
+      </a>
+      <a class="close-btn" href="#" aria-label="Закрыть">ЗАКРЫТЬ (X)</a>
+    </div>
+  </nav>
+  <div id="logo"><img src="Logo.svg" alt="Мануфактура"></div>
+</header>
+<header class="site-header header-dark">
+  <nav class="site-nav" aria-label="Меню">
+    <ul>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Авторы</span></span><span class="nr-copy"><span class="nav-label">Авторы</span></span></span> <span class="nav-count">(145)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">Галерея</span></span><span class="nr-copy"><span class="nav-label">Галерея</span></span></span> <span class="nav-count">(542)</span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">События</span></span><span class="nr-copy"><span class="nav-label">События</span></span></span></a></li>
+      <li><a href="#"><span class="nav-roll"><span class="nr-in"><span class="nav-label">о&nbsp;проекте</span></span><span class="nr-copy"><span class="nav-label">о&nbsp;проекте</span></span></span></a></li>
+    </ul>
+    <div class="nav-end">
+      <a class="fave" href="#" aria-label="Избранное">
+        <span class="fave-ic"><img src="Favorites.svg" alt="" width="24" height="24"><i class="count"></i></span>
+        <span class="fave-label">Избранное (0)</span>
+      </a>
+      <a class="profile" href="#" aria-label="Профиль">
+        <img src="profile 1.svg" alt="" width="24" height="24">
+      </a>
+      <a class="close-btn" href="#" aria-label="Закрыть">ЗАКРЫТЬ (X)</a>
+    </div>
+  </nav>
+  <div id="logo-dark"><img src="Logo.svg" alt="Мануфактура"></div>
+</header>
+<div id="year">(2026)</div>
+<div id="tagline">Выставки, мастер-классы, коллекция авторских работ.</div>
+<div id="main-title" aria-hidden="true"><span>Художественное&nbsp;</span><span class="mt-accent">пространство</span></div>
+<div id="curtain"><div id="curtain-inner"><div id="curtain-text"><span id="curtain-title">Миссия&nbsp;<span class="t-sub">Мануфактуры</span></span>Мы не&nbsp;конкурируем с&nbsp;онлайн-площадками — мы возвращаем <span class="it">смысл посещения. </span>Мануфактура объединяет просвещение и&nbsp;коллекционирование в&nbsp;одном пространстве, где картину можно <span class="it">рассмотреть,</span> а&nbsp;не&nbsp;пролистать</div><div class="curtain-photo"><img src="Event.png" alt=""><img class="cp-b" src="Event.png" alt=""></div><div id="curtain-about"><div class="a-text">Мануфактура размещается<br>в здании кирпичной фабрики<br>1751 года — там, где когда‑то<br>работали руки ремесленников,<br>теперь работает взгляд.<br>Мы не соперничаем с онлайн-<br>площадками: здесь важно то,<br>что нельзя пролистать — фактура<br>холста, масштаб работы, тишина<br>между экспонатами. Просвещение<br>и коллекционирование существуют<br>в одном пространстве, объединяя<br>тех, кто создаёт, и тех,<br>кто выбирает</div><div class="a-link">О проекте&nbsp;<span class="a-arrow">→</span></div></div></div></div>
+<div id="white-fill"></div>
+<div id="cursor-dot"></div>
+
+<div id="stack" aria-hidden="true"></div>
+<div class="event-title" aria-hidden="true"><span class="et-first">События</span><span class="et-last">мануфактуры</span></div>
+
+<div id="gallery" aria-hidden="true">
+  <div id="gallery-page">
+    <div id="gallery-bg"><img class="bg-img" src="bg.png" alt="" onerror="this.remove()"></div>
+    <div id="gallery-title"><div id="gallery-title-group"><span class="gt-first">Галерея&nbsp;</span><span class="gt-last">мануфактуры</span></div><a class="g-more" href="#">Больше работ&nbsp;<span class="a-arrow">→</span></a></div>
+    <div id="gallery-grid"></div>
+
+<div id="authors">
+        <div id="authors-title"><div id="authors-title-group"><span class="at-first">Авторы&nbsp;</span><span class="at-last">мануфактуры</span></div><a class="a-more" href="#">Все авторы&nbsp;<span class="a-arrow">→</span></a></div>
+        <div id="authors-list"></div>
+      </div>
+
+      <footer class="site-footer" id="site-footer">
+        <div class="foot-hero" aria-hidden="true">
+          <canvas class="foot-canvas" width="443" height="665"></canvas>
+        </div>
+        <div class="foot-manuf" aria-hidden="true">
+          <img src="assets/asset-7cbfa907.svg" alt="" width="182" style="left:0; top:6px">
+          <img src="assets/asset-cb074445.svg" alt="" width="154" style="left:190px; top:3px">
+          <img src="assets/asset-c241d881.svg" alt="" width="133" style="left:369px; top:6px">
+          <img src="assets/asset-9966557c.svg" alt="" width="146" style="left:524px; top:6px">
+          <img src="assets/asset-869e2bae.svg" alt="" width="207" style="left:677px; top:0">
+          <img src="assets/asset-ee7cac3e.svg" alt="" width="154" style="left:884px; top:3px">
+          <img src="assets/asset-19c74b70.svg" alt="" width="133" style="left:1062px; top:6px">
+          <img src="assets/asset-bd5b31bd.svg" alt="" width="129" style="left:1211px; top:6px">
+          <img src="assets/asset-7f448b69.svg" alt="" width="146" style="left:1349px; top:6px">
+          <img src="assets/asset-f94bdd54.svg" alt="" width="122" style="left:1519px; top:6px">
+          <img src="assets/asset-94cb6343.svg" alt="" width="154" style="left:1645px; top:3px">
+        </div>
+        <div class="foot-right">
+          <p class="foot-copy">(© 2026)</p>
+          <div class="foot-meta">
+            <p>+7 4932 554-23-23<br>manufactura@mail.ru</p>
+            <p>Россия, Иваново,<br>пр-т Ленина, д. 21</p>
+            <p><a href="#">Telegram</a><br><a href="#">Instagram</a></p>
+          </div>
+          <a class="foot-privacy" href="#">Политика конфиденциальности</a>
+        </div>
+        <p class="foot-mission"><span class="mi-w">Художественное </span><em>пространство</em></p>
+      </footer>
+  </div>
+</div>
+
+<div id="debug"><div id="d-cursor"></div></div>
+<div id="d-value">scroll: 0</div>
+
+<script src="three.min.js"></script>
+<script src="images.js"></script>
+<script>
+(function () {
+  const NUM = IMAGE_DATA.length;          // 23 photos from the gallery
+  const GAP_PX = 80;                      // visible gap between cards, in screen px
+  const RING_PX = 0.57;                   // ring radius as share of the smaller viewport edge
+  const ROY = 0.16;                       // auto-rotation speed (rad/s), only in ring mode
+  const TILT = 0.07;                      // mouse tilt amplitude
+  const OVERLAY = 0.2;                    // white overlay on every card by default
+  const UNFOLD_DIST = 10;                 // scroll units needed to fully unfold the tape
+  const RISE_DIST = 18;                   // экран 2: чёрная шторка (BG) и текст поднимаются
+  const SHOW_DIST = 6;                    // хвост заливки текста после подъёма
+  const CURTAIN_START = 0;                // шторка стартует с самого начала, кольцо разворачивается под ней (наслоение)
+  const STACK_P0 = 21;                    // экран 3: шторка уехала (~20.7) — дальше скролл = наслоение событий
+  const GALLERY_IN = 4;                   // экран 4: скролл-дистанция подъёма белой панели галереи над стопкой
+
+  // --- corridor mode ---
+  let corridorMode = false;
+  let corridorBlend = 0;              // 0 = ring, 1 = corridor
+  let corridorBlendTarget = 0;
+  let corridorDepth = 0;
+  let corridorScroll = 0;
+  let corridorScrollTarget = 0;
+  const CORRIDOR_CARD_GAP = 4;
+  const CORRIDOR_SIDE_SPREAD = 2.3;
+  const CORRIDOR_CAM_Y = 1.7;
+  const CORRIDOR_LOOP = NUM * CORRIDOR_CARD_GAP;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xfbfcfa);
+
+  const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 100);
+  camera.position.set(0, 1.5, 14);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  document.body.appendChild(renderer.domElement);
+  renderer.domElement.style.position = 'fixed';
+  renderer.domElement.style.inset = '0';
+  renderer.domElement.style.zIndex = '0';
+  renderer.domElement.style.pointerEvents = 'none';
+  renderer.domElement.style.visibility = new URLSearchParams(location.search).get('skip') ? 'hidden' : 'visible'; // TEMP
+
+  const loader = new THREE.TextureLoader();
+  const ring = new THREE.Group();
+  scene.add(ring);
+
+  // corridor lights (hidden until corridor mode)
+  const corridorLights = [];
+  const CORRIDOR_LIGHT_STEP = 8;
+  const CORRIDOR_LIGHT_LOOP = 40;
+  for (let i = 0; i < 20; i++) {
+    const light = new THREE.PointLight(0xffffff, 0, 26);
+    scene.add(light);
+    corridorLights.push({ light, base: -(i + 1) * CORRIDOR_LIGHT_STEP });
+  }
+  const corridorFog = new THREE.FogExp2(0x050505, 0.05);
+
+  const cards = [];   // { group, wrap, mesh, overlay, ang, aspect, done, lean, off, lift, ovT }
+  let radius = 0;
+  let spacingUnit = 0;                    // card pitch on the tape (world units)
+  let tapeSpan = 0;                       // tape length in world units, set in layout()
+
+  // world units per screen pixel at the plane of the ring
+  const unitPerPx = () => (2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))) / innerHeight;
+
+  // ring radius, card width and tape pitch all computed in screen pixels so the
+  // whole ring fits the window and the gap stays ~GAP_PX
+  function layout() {
+    const upx = unitPerPx();
+    const rPx = RING_PX * Math.min(innerWidth, innerHeight);
+    radius = rPx * upx;
+    const arcPx = (Math.PI * 2 * rPx) / NUM;
+    const wPx = Math.max(60, arcPx - GAP_PX);
+    const w = wPx * upx;
+    spacingUnit = (arcPx + GAP_PX) * upx; // card pitch = card width + gap, keeps the same 80px
+    tapeSpan = NUM * spacingUnit;
+
+    cards.forEach(c => {
+      c.mesh.scale.set(w, w * c.aspect, 1);
+      c.overlay.scale.set(w, w * c.aspect, 1);
+    });
+  }
+  function setAspect(c, aspect, force) {
+    if (c.done && !force) return;
+    c.aspect = aspect;
+    c.done = true;
+    layout();
+  }
+
+  for (let i = 0; i < NUM; i++) {
+    const ang = (i / NUM) * Math.PI * 2;
+    const tex = loader.load(IMAGE_DATA[i]);
+    tex.encoding = THREE.sRGBEncoding;
+
+    const group = new THREE.Group();
+    ring.add(group);
+
+    const wrap = new THREE.Group();       // "sticks" toward the cursor on hover
+    group.add(wrap);
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ map: tex, toneMapped: false, side: THREE.DoubleSide })
+    );
+    const overlay = new THREE.Mesh(
+      new THREE.PlaneGeometry(1, 1),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: OVERLAY, side: THREE.DoubleSide })
+    );
+    wrap.add(mesh);
+    wrap.add(overlay);
+
+    const card = { group, wrap, mesh, overlay, ang, aspect: 1, done: false, lean: 0, off: 0, lift: 0, ovT: OVERLAY };
+    cards.push(card);
+
+    const im = tex.image;
+    if (im && im.width) setAspect(card, im.height / im.width, true);
+  }
+  layout();
+
+  // ---- hover via raycast, "stick" like in index.html ----
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  let hoverCard = null;
+
+  function cardUnderPointer(e) {
+    ndc.x = (e.clientX / innerWidth) * 2 - 1;
+    ndc.y = -(e.clientY / innerHeight) * 2 + 1;
+    raycaster.setFromCamera(ndc, camera);
+    for (const hit of raycaster.intersectObjects(cards.map(c => c.mesh))) {
+      return cards.find(c => c.mesh === hit.object);
+    }
+    return null;
+  }
+  window.addEventListener('mousemove', (e) => {
+    hoverCard = cardUnderPointer(e);
+  }, { passive: true });
+
+  // mouse tilt: -1..1, smoothed
+  let mx = 0, my = 0, smx = 0, smy = 0;
+  window.addEventListener('mousemove', (e) => {
+    mx = (e.clientX / innerWidth) * 2 - 1;
+    my = (e.clientY / innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  // инерционная точка за курсором (белая, exclusion) — как Obys
+  const cursorDot = document.getElementById('cursor-dot');
+  let dmx = -9999, dmy = -9999, pmx = -9999, pmy = -9999;
+  let dScale = 1, pScale = 1;
+  let cursorVisible = false;
+
+  window.addEventListener('mousemove', (e) => {
+    pmx = e.clientX; pmy = e.clientY;
+    if (!cursorVisible) {
+      cursorVisible = true;
+      cursorDot.classList.add('on');
+      dmx = pmx; dmy = pmy;
+    }
+    // кружок растёт только там, где это уместно (см. underPointer):
+    // над ссылками/меню — нет, над фото афиш и карточками карусели — да.
+    pScale = underPointer();
+  }, { passive: true });
+  document.addEventListener('mouseleave', () => {
+    cursorVisible = false;
+    cursorDot.classList.remove('on');
+  });
+
+  // ---- wheel: инерция колеса вЂ” дельты копим в скорость, скорость затухает ----
+  let SCROLL_MAX = UNFOLD_DIST + RISE_DIST + NUM * 0.5;   // капка; позже расширяется под 1:1-скорость галереи
+  let scroll = 0, scrollV = 0;             // position + velocity (scroll units/s)
+  const __gs = parseFloat(new URLSearchParams(location.search).get('g'));
+  if (!isNaN(__gs)) { scroll = __gs; scrollV = 0; }   // TEMP debug hook
+  window.__noWebGL = !!new URLSearchParams(location.search).get('noweb'); // TEMP
+  if (window.__noWebGL) renderer.domElement.style.display = 'none'; // TEMP
+  window.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    if (corridorMode) {
+      corridorScrollTarget += e.deltaY * 0.032;
+      if (corridorScrollTarget < 0) corridorScrollTarget = 0;
+      if (corridorScrollTarget > 100000) corridorScrollTarget = 100000;
+      return;
+    }
+    scrollV += e.deltaY * 0.022;            // копим дельты колеса в скорость
+    scrollV *= 0.92;                       // мягкое гашение рывков
+  }, { passive: false });
+
+  // ---- фиста: галерея на фото2 (колесо = смена) ----
+  const GALLERY_COUNT = 23;
+  const WHEEL_STEP = 100;                       // один щелчок колеса (~100px) = 1 смена
+  const galleryEl = document.querySelector('.curtain-photo');
+  const galleryPhotoA = galleryEl ? galleryEl.querySelector('img:not(.cp-b)') : null;
+  const galleryPhotoB = galleryEl ? galleryEl.querySelector('.cp-b') : null;
+  const FADE_MS = 220;
+  let fadeTimer = null;
+  let pendingSrc = null;
+  let activeImg = galleryPhotoA;               // какой слой сейчас видимый
+  const swapPhoto = (src) => {
+    if (!galleryPhotoA || !galleryPhotoB) return;
+    if (fadeTimer) { pendingSrc = src; return; }      // во время фейда — отложим
+    const hidden = activeImg === galleryPhotoA ? galleryPhotoB : galleryPhotoA;
+    hidden.src = src;
+    hidden.style.opacity = '1';                 // новая проявляется ПОВЕРХ старой
+    fadeTimer = setTimeout(() => {
+      activeImg.src = src;                      // старый снизу дополняется до той же
+      hidden.style.opacity = '0';               // старый виден, пустоты нет
+      fadeTimer = null;
+      if (pendingSrc) { const p = pendingSrc; pendingSrc = null; swapPhoto(p); }
+    }, FADE_MS);
+  };
+  const galleryCache = [];
+  for (let gi = 1; gi <= GALLERY_COUNT; gi++) {
+    const im = new Image();
+    im.src = `gallery/${gi}.jpg`;
+    galleryCache.push(im);
+  }
+  let galleryIndex = 0;                        // 0 = исходное Event.png, дальше галерея
+  let wheelAcc = 0;
+  const galleryFiles = [];
+  for (let gi = 1; gi <= GALLERY_COUNT; gi++) galleryFiles.push(`gallery/${gi}.jpg`);
+  const pickRandomGallery = (avoid) => {
+    let n;
+    do { n = 1 + Math.floor(Math.random() * GALLERY_COUNT); } while (n === avoid);
+    return n;
+  };
+  window.addEventListener('wheel', (e) => {
+    if (!galleryPhotoA) return;
+    if (e.deltaY === 0) return;
+    wheelAcc += Math.abs(e.deltaY);
+    const steps = Math.floor(wheelAcc / WHEEL_STEP);
+    if (steps < 1) return;
+    wheelAcc = wheelAcc % WHEEL_STEP;
+    for (let k = 0; k < steps; k++) {
+      galleryIndex = pickRandomGallery(galleryIndex);      // рандомный следующий файл
+    }
+    swapPhoto(galleryFiles[galleryIndex - 1]);
+  }, { passive: true });
+
+  function centerPoster() {
+    const hdr = document.querySelector('.site-header')?.offsetHeight || 0;
+    headerH = hdr;
+    if (stackEl) stackEl.style.top = `calc(50% + ${hdr / 2}px)`;
+    const card = stackCards && stackCards[0];
+    if (!card) return;
+    const p = card.querySelector('.poster');
+    if (!p) return;
+    const pw = p.offsetWidth || 0;
+    const ph = p.offsetHeight || 0;
+    const cx = innerWidth / 2;
+    const blockLeft = cx - pw / 2;          // блок стартует от левого края фото
+    const blockW = innerWidth - 60 - blockLeft;  // до правого поля 60px
+    // Правая колонка (название + формат + дата) центрируется по высоте фото:
+    // измеряем высоты инфо и даты и ставим их друг под другом одной группой.
+    const COL_GAP = 56;                     // воздух между форматом и датой
+    for (const ec of stackCards) {
+      ec.style.width = `${blockW}px`;
+      ec.style.height = `${ph}px`;
+      ec.style.transformOrigin = `${pw / 2}px ${ph / 2}px`;
+      const im = ec.querySelector('.poster');
+      if (im) { im.style.width = `${pw}px`; im.style.height = `${ph}px`; }
+      const inf = ec.querySelector('.ecrd-info');
+      const dt = ec.querySelector('.ecrd-date');
+      if (inf && dt) {
+        inf.style.right = '0';
+        inf.style.top = '120px';            // временно — только для замера высоты
+        inf.style.bottom = 'auto';
+        dt.style.right = '0';
+        dt.style.top = '120px';
+        dt.style.bottom = 'auto';
+        const infoH = inf.offsetHeight || 0;
+        const dateH = dt.offsetHeight || 0;
+        const colTop = Math.max(40, (ph - infoH - COL_GAP - dateH) / 2);
+        inf.style.top = `${colTop}px`;
+        dt.style.top = `${colTop + infoH + COL_GAP}px`;
+      }
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    layout();
+    centerPoster();
+  });
+
+  const logoEl = document.getElementById('logo');
+  const taglineEl = document.getElementById('tagline');
+  const yearEl = document.getElementById('year');
+  const mainTitleEl = document.getElementById('main-title');
+
+  // Ховер-ролл текста в меню реализован чистым CSS (:hover → translateY в маске),
+  // JS тут не нужен.
+
+  // ---- debug: высоты экранов для теста (2 зоны: синяя + вторая) ----
+  const debugEl = document.getElementById('debug');
+  const dCursor = document.getElementById('d-cursor');
+  const DBG_TOTAL = UNFOLD_DIST + RISE_DIST + NUM * 0.5;
+  const dValue = document.getElementById('d-value');
+  const DBG_MARKS = {
+    0: '0',
+    [UNFOLD_DIST]: String(UNFOLD_DIST),
+    [UNFOLD_DIST + RISE_DIST]: String(UNFOLD_DIST + RISE_DIST),
+      };
+  function addMark(at, label) {
+    const m = document.createElement('div');
+    m.className = 'd-mark';
+    m.textContent = label;
+    m.style.left = (at / DBG_TOTAL * 100).toFixed(2) + '%';
+    debugEl.appendChild(m);
+  }
+  (function buildSegs() {
+    const segs = [
+      ['d-ring',   0, UNFOLD_DIST],
+      ['d-curtain', UNFOLD_DIST, RISE_DIST],
+          ];
+    for (const [cls, from, width] of segs) {
+      const s = document.createElement('div');
+      s.className = 'd-seg ' + cls;
+      s.style.left = (from / DBG_TOTAL * 100).toFixed(2) + '%';
+      s.style.width = (width / DBG_TOTAL * 100).toFixed(2) + '%';
+      debugEl.appendChild(s);
+    }
+    for (const at in DBG_MARKS) addMark(+at, DBG_MARKS[at]);
+  })();
+  function updateDebug() {
+    const pct = Math.min(1, scroll / DBG_TOTAL);
+    dCursor.style.left = (pct * 100).toFixed(2) + '%';
+    const rx = (ring.rotation.x * 180 / Math.PI).toFixed(2);
+    const rz = (ring.rotation.z * 180 / Math.PI).toFixed(2);
+    dValue.textContent = `scroll=${scroll.toFixed(1)}  smx=${smx.toFixed(2)} smy=${smy.toFixed(2)}  rotX=${rx}° rotZ=${rz}°  mx=${mx.toFixed(2)} my=${my.toFixed(2)}`;
+  }
+
+  // ---- экран 2: шторка с текстом миссии ----
+  const curtainEl = document.getElementById('curtain');
+  const curtainText = document.getElementById('curtain-text');
+  const whiteFillEl = document.getElementById('white-fill');
+  const headerWhite = document.querySelector('.header-white');
+  const headerDark = document.querySelector('.header-dark');
+  // ---- афиша-стопка (экран 3): цельные блоки-карточки в #stack ----
+  const stackEl = document.getElementById('stack');
+  let headerH = 0;                  // высота шапки — сдвигает и стэк, и остановку фото шторки
+  let hHide = 0;                    // скрытие (#): 0 = показан, ~1 = уехал вверх
+
+  // ---- Данные событий (слайдер экрана 3) ----
+  const EVENTS = [
+    {
+      img: 'Afisha1.jpg',
+      date: '12/02 — 31/07',
+      title: [['«Фестиваль', 'позитивного'], ['идейного', 'искусства»']],
+      format: 'Выставка + встреча с художниками'
+    },
+    {
+      img: 'Afisha2.jpg',
+      date: '08/08 — 31/12',
+      title: [['«Выставка', '+'], ['перфоманс»']],
+      format: 'Выставка, перфоманс, лекции'
+    },
+    {
+      img: 'Afisha3.jpg',
+      date: '15/01 — 30/04',
+      title: [['«Инсталляция', 'и'], ['новые', 'медиа»']],
+      format: 'Экспозиция, саунд-арт, лекции'
+    }
+  ];
+
+  // Висячие союзы: строка не должна заканчиваться союзом (и/в/на/…). Если такой
+  // стоит в конце строки — переносим его в начало следующей.
+  function fixDanglingConjunctions(title) {
+    const out = title.map(line => line.slice());
+    const CONJ = /^(и|а|но|в|во|с|со|к|ко|о|об|до|по|за|на|у|от|из|для|или|же)$/i;
+    for (let i = 0; i < out.length - 1; i++) {
+      const line = out[i];
+      const last = line.length ? line[line.length - 1] : '';
+      if (last && CONJ.test(last)) {
+        line.pop();
+        out[i + 1].unshift(last);
+      }
+    }
+    return out;
+  }
+
+  // Каждая карточка — цельный блок: верхняя линия-бордер, под ней белый фон,
+  // на котором фото (слева) и весь контент (название/формат/дата) справа
+  // колонкой по центру фото. Весь блок ездит как один элемент стека — контент
+  // внутри, без подмены.
+  function buildStackCards() {
+    for (const ev of EVENTS) {
+      const ecard = document.createElement('div');
+      ecard.className = 'ecard';
+      const line = document.createElement('span');
+      line.className = 'poster-line';
+      const img = document.createElement('img');
+      img.className = 'poster';
+      img.src = ev.img;
+      img.alt = '';
+      const info = document.createElement('div');
+      info.className = 'ecrd-info';
+      const it = document.createElement('div');
+      it.className = 'ei-title';
+      const titleLines = fixDanglingConjunctions(ev.title);
+      let wi = 0;
+      it.innerHTML = titleLines.map(line =>
+        line.map(w => `<span class="${(wi++) % 2 ? 'tn' : 'hn'}">${w}</span>`).join(' ')
+      ).join('<br>');
+      const det = document.createElement('div');
+      det.className = 'ei-details';
+      const lab = document.createElement('div');
+      lab.className = 'ei-label';
+      lab.textContent = 'Формат';
+      const txt = document.createElement('div');
+      txt.className = 'ei-text';
+      txt.textContent = ev.format;
+      det.appendChild(lab);
+      det.appendChild(txt);
+      info.appendChild(it);
+      info.appendChild(det);
+      const date = document.createElement('div');
+      date.className = 'ecrd-date';
+      const di = document.createElement('div');
+      di.className = 'date-inner';
+      di.textContent = ev.date;
+      date.appendChild(di);
+      const wash = document.createElement('div');
+      wash.className = 'e-wash';
+      ecard.appendChild(line);
+      ecard.appendChild(wash);
+      ecard.appendChild(img);
+      ecard.appendChild(info);
+      ecard.appendChild(date);
+      stackEl.appendChild(ecard);
+    }
+  }
+  buildStackCards();
+  const stackCards = Array.from(stackEl.querySelectorAll('.ecard'));  // [0] = первое событие
+  const eventTitle = document.querySelector('.event-title');
+  let titleShown = false;  // реально ли заголовок-раздел сейчас показан
+
+  // ---- Галерея (экран 4): сетка каталога по Figma Gallery ----
+  const gPane = document.getElementById('gallery');
+  const galleryGrid = document.getElementById('gallery-grid');
+  const galleryPage = document.getElementById('gallery-page');
+  const galleryBg = document.getElementById('gallery-bg');
+  const galleryMore = galleryPage ? galleryPage.querySelector('.g-more') : null;
+  const bgImg = galleryBg ? galleryBg.querySelector('.bg-img') : null;
+  const footEl = document.getElementById('site-footer');
+  const footBgImg = footEl?.querySelector('.foot-bg-img') ?? null;
+  const footBg = footEl?.querySelector('.foot-bg') ?? null;
+  // Резиновый футер: логотип-слово тянется от левого до правого паддинга
+  // #gallery-page, правая колонка и остальное держатся по краям окна.
+  let footScale = 1;      // текущий масштаб логотипа (устанавливает layoutFooter)
+  let footParY = 0;       // лёгкий параллакс логотипа (translateY), поверх scale
+  function layoutFooter() {
+    if (!footEl) return;
+    const mf = footEl.querySelector('.foot-manuf');
+    if (!mf) return;
+    const page = document.getElementById('gallery-page');
+    const padL = parseFloat(getComputedStyle(page).paddingLeft) || 60;
+    const padR = parseFloat(getComputedStyle(page).paddingRight) || 60;
+    const avail = footEl.clientWidth - padL - padR;
+    const s = Math.max(0.05, avail / 1800);
+    footScale = s;
+    mf.style.left = padL + 'px';
+    mf.style.transform = `translateY(${footParY.toFixed(1)}px) scale(${s.toFixed(4)})`;
+    ['foot-copy', 'foot-meta', 'foot-privacy'].forEach((sel) => {
+      const el = footEl.querySelector('.' + sel);
+      if (el) el.style.right = padR + 'px';
+    });
+  }
+  layoutFooter();
+  window.addEventListener('resize', layoutFooter);
+  // ---- Многослойное стирание фото подвала ----
+  // Слои идут снизу вверх; стирать можно только верхний неоткрытый слой.
+  // Когда текущий протёрт на FOOT_OPEN (>90%) — открывается следующий ниже.
+  // Когда открыты все — цикл перезапускается в случайном порядке фото.
+  const FOOT_PHOTOS = [
+    'assets/image-977f8c8f333df42a6650904a.png',
+    'Afisha1.jpg',
+    'Afisha2.jpg',
+    'Afisha3.jpg',
+    'assets/image-2427478e282c119b6a523073.jpg'
+  ];
+  const FOOT_BRUSH = 16;   // радиус кисти, px
+  const FOOT_OPEN = 0.9;   // порог «фото полностью показалось»
+  const footHero = footEl?.querySelector('.foot-hero');
+  const footCanvasEl = footHero?.querySelector('.foot-canvas');
+  if (footHero && footCanvasEl && footCanvasEl.getContext) {
+    const displayCtx = footCanvasEl.getContext('2d');
+    const FH_W = 443, FH_H = 665;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    footCanvasEl.width = FH_W * dpr;
+    footCanvasEl.height = FH_H * dpr;
+    displayCtx.scale(dpr, dpr);
+
+    const layers = [];          // canvas-слои (низ → верх)
+    let active = -1;            // индекс слоя, который можно стирать
+
+    function renderFoot() {
+      displayCtx.clearRect(0, 0, FH_W, FH_H);
+      for (let i = 0; i < layers.length; i++) {
+        const ly = layers[i];
+        if (ly) displayCtx.drawImage(ly.canvas, 0, 0, FH_W, FH_H);
+      }
+    }
+
+    function drawCover(cx, im, w, h) {          // афиши/фото разного соотношения — cover-заливка
+      const s = Math.max(w / im.width, h / im.height);
+      const dw = im.width * s, dh = im.height * s;
+      cx.drawImage(im, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    }
+
+    async function beginCycle() {
+      const order = FOOT_PHOTOS.map((_, i) => i).sort(() => Math.random() - 0.5);
+      for (let i = 0; i < order.length; i++) {
+        const im = new Image();
+        await new Promise((res, rej) => { im.onload = res; im.onerror = rej; im.src = FOOT_PHOTOS[order[i]]; });
+        const cv = document.createElement('canvas');
+        cv.width = FH_W * dpr; cv.height = FH_H * dpr;
+        const cx = cv.getContext('2d');
+        cx.scale(dpr, dpr);
+        drawCover(cx, im, FH_W, FH_H);
+        cx.fillStyle = 'rgba(0, 0, 0, 0.2)';      // затемнение кадра как в Figma
+        cx.fillRect(0, 0, FH_W, FH_H);
+        layers[i] = { canvas: cv, ctx: cx };
+      }
+      active = layers.length - 1;
+      renderFoot();
+    }
+
+    function openedRatio(ly) {
+      const d = ly.ctx.getImageData(0, 0, ly.canvas.width, ly.canvas.height).data;
+      let t = 0;
+      const n = ly.canvas.width * ly.canvas.height;
+      for (let i = 3; i < d.length; i += 4) if (d[i] < 16) t++;
+      return t / n;
+    }
+
+    function afterScratch() {
+      renderFoot();
+      const ly = layers[active];
+      if (ly && openedRatio(ly) >= FOOT_OPEN) {
+        active--;                                  // «фото показалось» → открываем следующий слой
+        if (active < 0) {                          // всё открыто — цикл заново
+          layers.length = 0;
+          beginCycle();
+        }
+      }
+    }
+
+    let fPrev = null;
+    function scrubTo(x, y) {
+      const ly = layers[active];
+      if (!ly) return;
+      const r = FOOT_BRUSH;
+      ly.ctx.globalCompositeOperation = 'destination-out';
+      const steps = fPrev ? Math.max(1, Math.ceil(Math.hypot(x - fPrev.x, y - fPrev.y) / (r * 0.4))) : 1;
+      for (let i = 0; i <= steps; i++) {
+        const t = steps ? i / steps : 0;
+        const px = fPrev ? fPrev.x + (x - fPrev.x) * t : x;
+        const py = fPrev ? fPrev.y + (y - fPrev.y) * t : y;
+        const g = ly.ctx.createRadialGradient(px, py, r * 0.1, px, py, r);
+        g.addColorStop(0, 'rgba(0,0,0,0.9)');
+        g.addColorStop(0.7, 'rgba(0,0,0,0.55)');
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ly.ctx.fillStyle = g;
+        ly.ctx.beginPath();
+        ly.ctx.arc(px, py, r, 0, Math.PI * 2);
+        ly.ctx.fill();
+      }
+      fPrev = { x, y };
+      afterScratch();
+    }
+
+    function localPos(e) {
+      const rect = footHero.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    }
+    footHero.addEventListener('pointermove', (e) => {
+      const p = localPos(e);
+      scrubTo(p.x, p.y);
+      fPrev = p;
+    });
+    footHero.addEventListener('pointerleave', () => { fPrev = null; });
+    footCanvasEl.addEventListener('pointerdown', (e) => {
+      const p = localPos(e);
+      fPrev = p;
+      scrubTo(p.x, p.y);
+      footCanvasEl.setPointerCapture(e.pointerId);
+    });
+    beginCycle();
+  }
+  const GALLERY_ITEMS = [
+    { author: 'Полина Штерн', art: 'Малаховский механик Митя', details: '75×55, 2019 · Графика', tall: true },
+    { author: 'Алексей Красовский', art: 'Золотая осень', details: '100×80, 2021 · Масло', tall: false },
+    { author: 'Мария Соколова', art: 'Тишина двора', details: '60×45, 2020 · Акварель', tall: false },
+    { author: 'Дмитрий Волков', art: 'Индустриальный пейзаж', details: '120×90, 2022 · Смешанная техника', tall: true }
+  ];
+  // Лёгкий параллакс картинок галереи: коэффициент на карточку (минус = чуть
+  // вниз/вперёд относительно хода страницы, плюс = чуть отстаёт).
+  const G_PARALLAX = [-1, 0.6, 0.35, -0.55];
+  function buildGalleryCards() {
+    if (!galleryGrid) return;
+    for (let i = 0; i < GALLERY_ITEMS.length; i++) {
+      const item = GALLERY_ITEMS[i];
+      const card = document.createElement('figure');
+      card.className = 'g-card';
+      const wrap = document.createElement('div');
+      wrap.className = 'g-img-wrap';
+      const img = document.createElement('img');
+      img.className = 'g-img';
+      img.src = 'gallery/' + (i + 1) + '.jpg';
+      img.alt = item.art;
+      img.dataset.par = String(G_PARALLAX[i % G_PARALLAX.length]);
+      wrap.appendChild(img);
+      const hover = document.createElement('div');
+      hover.className = 'g-hover';
+      const frame = document.createElement('div');
+      frame.className = 'g-frame';
+      const himg = document.createElement('img');
+      himg.className = 'g-hover-img';
+      himg.src = img.src;
+      himg.alt = item.art;
+      frame.appendChild(himg);
+      hover.appendChild(frame);
+      wrap.appendChild(hover);
+      const txt = document.createElement('figcaption');
+      txt.className = 'g-txt';
+      const meta = document.createElement('div');
+      meta.className = 'g-meta';
+      const author = document.createElement('div');
+      author.className = 'g-author';
+      author.textContent = item.author;
+      const det = document.createElement('div');
+      det.className = 'g-det';
+      det.textContent = item.details;
+      meta.appendChild(author);
+      meta.appendChild(det);
+      const art = document.createElement('div');
+      art.className = 'g-art';
+      art.textContent = item.art;
+      txt.appendChild(meta);
+      txt.appendChild(art);
+      card.appendChild(wrap);
+      card.appendChild(txt);
+      galleryGrid.appendChild(card);
+    }
+  }
+  buildGalleryCards();
+
+  // ---- Блок «Авторы мануфактуры»: колонка карточек авторов (Author Row) ----
+  // Карточки «Авторы мануфактуры» — реальные записи из Figma (7 авторов).
+  const AUTHORS_LIST = document.getElementById('authors-list');
+  // Миниатюры из Figma (AutorRow 38:845-848) + картинки нашей галереи.
+  // Форматы чередуем, чтобы наборы у авторов отличались.
+  const THUMB_FIGMA = [
+    'assets/image-df7b0bcf45a1b5d7ae9eeefa.png',
+    'assets/image-9113b1251c4fcdbb08fe8e7c.png',
+    'assets/image-2427478e282c119b6a523073.jpg'
+  ];
+  // Реальные миниатюры «Работ» из Figma (AutorRow 38:845-848): у каждого автора
+  // свой набор из 4 картинок со своими размерами (по assets.json), а не общий пул.
+  const AUTHOR_THUMBS = [
+    { src: 'assets/image-df7b0bcf45a1b5d7ae9eeefa.png', w: 90, h: 116 },
+    { src: 'assets/image-9113b1251c4fcdbb08fe8e7c.png', w: 90, h: 90 },
+    { src: 'assets/image-2427478e282c119b6a523073.jpg', w: 90, h: 116 },
+    { src: 'assets/image-df7b0bcf45a1b5d7ae9eeefa.png', w: 90, h: 73 }
+  ], AUTHOR_THUMBS_2 = [
+    { src: 'assets/image-c59609018966eadf4b2260dd.png', w: 90, h: 116 },
+    { src: 'assets/image-d70758f5f0f6bd9f8f6b7367.png', w: 90, h: 90 },
+    { src: 'assets/image-c59609018966eadf4b2260dd.png', w: 90, h: 116 },
+    { src: 'assets/image-1787a54d88bf14f21b14e115.png', w: 90, h: 73 }
+  ], AUTHOR_THUMBS_3 = [
+    { src: 'assets/image-468574fc71a0e0bb80d4f417.png', w: 90, h: 90 },
+    { src: 'assets/image-5ebd0ad7438dc40f6285f666.png', w: 90, h: 116 },
+    { src: 'assets/image-d9e11fd3ef616943ff2005cd.png', w: 90, h: 73 },
+    { src: 'assets/image-b14c9701bbd922ebaac47c69.png', w: 90, h: 116 }
+  ], AUTHOR_THUMBS_4 = [
+    { src: 'assets/image-ff5a2e009d0065049f09dfe3.jpg', w: 90, h: 116 },
+    { src: 'assets/image-4ac4f7476fb0756cb34269c1.png', w: 90, h: 116 },
+    { src: 'assets/image-2427478e282c119b6a523073.jpg', w: 90, h: 116 },
+    { src: 'assets/image-4515875df190625342058071.jpg', w: 90, h: 116 }
+  ], AUTHOR_THUMBS_5 = [
+    { src: 'assets/image-d770ae490692fc93113d24e3.png', w: 90, h: 116 },
+    { src: 'assets/image-4f5b21bc6f35005ea27e1eb1.png', w: 90, h: 80 },
+    { src: 'assets/image-b2ed35d905d34bc3ce2d0a29.jpg', w: 90, h: 116 },
+    { src: 'assets/image-2427478e282c119b6a523073.jpg', w: 90, h: 116 }
+  ], AUTHOR_THUMBS_6 = [
+    { src: 'assets/image-4515875df190625342058071.jpg', w: 90, h: 116 },
+    { src: 'assets/image-08c7b9e4829800a3f031dc51.png', w: 90, h: 116 },
+    { src: 'assets/image-9a28ad0276e151f4114a43cd.jpg', w: 90, h: 85 },
+    { src: 'assets/image-2427478e282c119b6a523073.jpg', w: 90, h: 116 }
+  ], AUTHOR_THUMBS_7 = [
+    { src: 'assets/image-6c755be96bc9dfaa4a676097.jpg', w: 90, h: 116 },
+    { src: 'assets/image-d70758f5f0f6bd9f8f6b7367.png', w: 90, h: 87 },
+    { src: 'assets/image-c59609018966eadf4b2260dd.png', w: 90, h: 116 },
+    { src: 'assets/image-c59609018966eadf4b2260dd.png', w: 90, h: 116 }
+  ];
+  const THUMB_GALLERY = [];
+  for (let gi = 1; gi <= 23; gi++) THUMB_GALLERY.push('gallery/' + gi + '.jpg');
+  const THUMB_POOL = THUMB_FIGMA.concat(THUMB_GALLERY);
+  // Выбор 4 неповторяющихся src, не совпадающих с текущими.
+  const thumbName = (url) => {
+    try { return decodeURIComponent(url.split('/').pop()); } catch (e) { return ''; }
+  };
+  function pickThumbs(current) {
+    const names = current.map(thumbName);
+    const avail = THUMB_POOL.filter(s => names.indexOf(thumbName(s)) === -1);
+    const out = [];
+    let guard = 0;
+    while (out.length < 4 && avail.length && guard++ < 100) {
+      const idx = Math.floor(Math.random() * avail.length);
+      out.push(avail.splice(idx, 1)[0]);
+    }
+    return out;
+  }
+  const AUTHORS = [
+    { avatar: 'assets/image-a98a73f2c4f0950cbbaf03b3.png', name: 'Ёлкина Мария',    field: 'Графика, офорт',              desc: 'Офорт и сухая игла на цинковых пластинах, ручная печать.', count: 13 },
+    { avatar: 'assets/image-44de36e4b1ea058c72ef72b3.png', name: 'Савельев Дмитрий', field: 'Живопись, масло',              desc: 'Масло на холсте, классическая многослойная лессировка.', count: 8 },
+    { avatar: 'assets/image-f77125386494bf67fb732817.png', name: 'Ковалёва Анна',    field: 'Акварель, тушь',               desc: 'Техника по-мокрому: акварель и тушь на хлопковой бумаге.', count: 21 },
+    { avatar: 'assets/image-594308d6773fbde56c4c2295.png', name: 'Петров Алексей',   field: 'Скульптура, бронза',           desc: 'Литьё бронзы по восковым моделям с ручной чеканкой.', count: 5 },
+    { avatar: 'assets/image-d028d5db8fe7aee76b97a800.png', name: 'Нагорная Ирина',   field: 'Фотография, цианотипия',       desc: 'Цианотипия, ручная печать на просвечивающей бумаге.', count: 17 },
+    { avatar: 'assets/image-4fd37d15d256f41739e3ae16.png', name: 'Чернов Максим',    field: 'Инсталляция, mixed media',     desc: 'Сборка объектов из найденных материалов, свет и звук.', count: 3 },
+    { avatar: 'assets/image-426893a7345ead4800d1ade5.png', name: 'Лисицына Ольга',   field: 'Керамика, глазурь',            desc: 'Ручная лепка, обжиг, авторские восстановительные глазури.', count: 10 }
+  ];
+  function buildAuthors() {
+    if (!AUTHORS_LIST) return;
+    const N = AUTHORS.length;
+    for (let i = 0; i < N; i++) {
+      const row = document.createElement('div');
+      row.className = 'a-row';
+      const id = document.createElement('div');
+      id.className = 'a-id';
+      const nb = document.createElement('div');
+      nb.className = 'a-namebox';
+      const rollText = (text) => {
+        const el = document.createElement('span');
+        el.className = 'mi';
+        el.textContent = text;
+        const copy = document.createElement('span');
+        copy.className = 'mc';
+        copy.textContent = text;
+        const m = document.createElement('span');
+        m.className = 'a-mask';
+        m.appendChild(el);
+        m.appendChild(copy);
+        return m;
+      };
+      const nm = document.createElement('div');
+      nm.className = 'a-name';
+      nm.appendChild(rollText(AUTHORS[i].name));
+      const fd = document.createElement('div');
+      fd.className = 'a-field';
+      fd.appendChild(rollText(AUTHORS[i].field));
+      nb.appendChild(nm);
+      nb.appendChild(fd);
+      const avatar = document.createElement('div');
+      avatar.className = 'a-avatar';
+      const avImg = document.createElement('img');
+      avImg.src = AUTHORS[i].avatar;
+      avImg.alt = '';
+      avatar.appendChild(avImg);
+      id.appendChild(avatar);
+      id.appendChild(nb);
+      const desc = document.createElement('div');
+      desc.className = 'a-desc';
+      desc.appendChild(rollText(AUTHORS[i].desc));
+      const works = document.createElement('div');
+      works.className = 'a-works';
+      const thumbs = document.createElement('div');
+      thumbs.className = 'a-thumbs';
+      // Двухслойные миниатюры: base (сидит внизу) + over (проявляется поверх,
+      // затем становится in и над ним проявляется следующий). Механика как на
+      // шторке (swapPhoto): новая появляется поверх, старая не пропадает.
+      const thumbsImgs = [];
+      const FADE_THUMB_MS = 620;
+      const authorThumbSet = [AUTHOR_THUMBS, AUTHOR_THUMBS_2, AUTHOR_THUMBS_3,
+        AUTHOR_THUMBS_4, AUTHOR_THUMBS_5, AUTHOR_THUMBS_6, AUTHOR_THUMBS_7][i] || AUTHOR_THUMBS;
+      const count = document.createElement('div');
+      count.className = 'a-count';
+      const cIn = document.createElement('span');
+      cIn.className = 'ac-in';
+      cIn.textContent = '(' + AUTHORS[i].count + ')';
+      const cCopy = document.createElement('span');
+      cCopy.className = 'ac-copy';
+      cCopy.textContent = '(' + AUTHORS[i].count + ')';
+      count.appendChild(cIn);
+      count.appendChild(cCopy);
+      authorThumbSet.forEach((t, k) => {
+        const box = document.createElement('div');
+        box.className = 'a-thumb';
+        box.style.width = t.w + 'px';
+        box.style.height = t.h + 'px';
+        const base = document.createElement('img');
+        base.className = 'a-base';
+        base.src = t.src;
+        base.alt = '';
+        const over = document.createElement('img');
+        over.className = 'a-over';
+        over.src = t.src;
+        over.alt = '';
+        box.appendChild(base);
+        box.appendChild(over);
+        if (k === authorThumbSet.length - 1) {
+          const tint = document.createElement('div');
+          tint.className = 'thumb-tint';
+          box.appendChild(tint);
+          box.appendChild(count);
+        }
+        thumbs.appendChild(box);
+        thumbsImgs.push({ base, over, timer: null, pending: null });
+      });
+      works.appendChild(thumbs);
+      row.appendChild(id);
+      row.appendChild(desc);
+      row.appendChild(works);
+      // При ховере строки миниатюры меняются на новый неповторяющийся набор
+      // (Figma + галерея). Вместо плавного фейда — «калейдоскоп»: новый кадр
+      // появляется на ~20% меньше и резко выпрыгивает во всю миниатюру
+      // (немного перелетает и устаканивается). Старый кадр не пустует, как
+      // swapPhoto на шторке.
+      const swapThumb = (th, src) => {
+        if (th.timer) { th.pending = src; return; }
+        const hidden = th.over.style.opacity === '1' ? th.base : th.over;
+        const fadingIn = hidden === th.over ? th.over : th.base;
+        fadingIn.style.transition = 'none';
+        fadingIn.style.transform = 'scale(0.75)';
+        fadingIn.src = src;
+        fadingIn.style.opacity = '1';
+        void fadingIn.offsetWidth;  // сброс: анимация стартует с нового кадра
+        fadingIn.style.transition = 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+        fadingIn.style.transform = 'scale(1)';
+        th.timer = setInterval(() => {
+          clearInterval(th.timer);
+          th.timer = null;
+          th.base.src = src;
+          fadingIn.style.transition = 'none';
+          fadingIn.style.transform = 'scale(1)';
+          fadingIn.style.opacity = '0';
+          if (th.pending) { const p = th.pending; th.pending = null; swapThumb(th, p); }
+        }, FADE_THUMB_MS);
+      };
+      row.addEventListener('mouseenter', () => {
+        const cur = thumbsImgs.map(th => thumbName(th.base.src));
+        const next = pickThumbs(cur);
+        thumbsImgs.forEach((th, k) => {
+          if (next[k]) swapThumb(th, next[k]);
+        });
+      });
+      AUTHORS_LIST.appendChild(row);
+    }
+  }
+  buildAuthors();
+
+  // Временный тумблер отладочной сетки: G, либо ?grid=1 / #grid в URL.
+  const debugGrid = document.getElementById('debug-grid');
+  if (debugGrid) {
+    const gridOn = (location.search.indexOf('grid=1') > -1 || location.hash === '#grid');
+    if (gridOn) debugGrid.classList.add('on');
+    document.addEventListener('keydown', (e) => {
+      if (e.key && e.key.toLowerCase() === 'g') debugGrid.classList.toggle('on');
+    });
+  }
+
+  // ---- Калибровка конца прокрутки: единый темп со 2-м экраном (эталон) ----
+  // 2-й экран едет 0.14*innerH px на scroll-единицу. Весь сайт, включая галерею,
+  // должен двигаться с этим темпом. Прокрутка галереи заканчивается, когда низ
+  // всей страницы (конец блока «Авторы мануфактуры») встаёт на низ экрана.
+  // Сверху добавляется «бюджет шторки»: футер статичен, а фото-баннер после
+  // этого уезжает вверх, открывая подвал, — на путь, равный высоте баннера.
+  const gEndK = STACK_P0 + 1 + 3.5 * (stackCards.length - 1);
+  if (galleryPage) {
+    const Hp = Math.max(0, galleryPage.offsetHeight);
+    const scrMax = Math.max(0, Hp + galleryPage.offsetTop);
+    const FOOT_CURTAIN_PX = footBg ? footBg.offsetHeight : 0;
+    SCROLL_MAX = gEndK + (scrMax + FOOT_CURTAIN_PX) / (0.14 * innerHeight || 1);
+  }
+
+  // Рост кружка под курсором: НЕ растёт над меню/ссылками шапки, растёт над
+  // фото афиш экрана 3 и над карточками кольца (пока экран 1 виден).
+  function underPointer() {
+    const x = pmx, y = pmy;
+    const hdr = document.querySelector('.site-header')?.offsetHeight || 0;
+    if (y <= hdr) return 1;
+    for (const ec of stackCards) {
+      if (getComputedStyle(ec).visibility === 'hidden') continue;
+      const im = ec.querySelector('.poster');
+      if (!im) continue;
+      const r = im.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+    }
+    if (gPane && gPane.classList.contains('open')) {
+      for (const gim of galleryGrid.querySelectorAll('.g-img')) {
+        const r = gim.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+      }
+    }
+    if (AUTHORS_LIST) {
+      for (const arow of AUTHORS_LIST.querySelectorAll('.a-row')) {
+        const r = arow.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+      }
+    }
+    const foot = document.getElementById('site-footer');
+    if (foot) {
+      for (const el of foot.querySelectorAll('a, button, .foot-mail')) {
+        const r = el.getBoundingClientRect();
+        if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return 3;
+      }
+    }
+    return hoverCard && scroll < UNFOLD_DIST ? 3 : 1;
+  }
+  centerPoster();
+  // Разбиваем текст на слова (неразрывные пробелы не рвём вЂ” предлог едет со словом).
+  const curtainWords = (() => {
+    const words = [];
+    const walker = document.createTreeWalker(curtainText, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    for (const node of nodes) {
+      const parts = node.textContent.split(/([ \t\r\n]+)/);
+      const frag = document.createDocumentFragment();
+      for (const part of parts) {
+        if (!part) continue;
+        if (/^[ \t\r\n]+$/.test(part)) {
+          frag.appendChild(document.createTextNode(' '));
+        } else {
+          const s = document.createElement('span');
+          s.className = 'w';
+          s.textContent = part;
+          frag.appendChild(s);
+          words.push(s);
+        }
+      }
+      node.parentNode.replaceChild(frag, node);
+    }
+    return words;
+  })();
+  let curtainLines = [];
+  function groupCurtainLines() {
+    curtainLines = [];
+    let cur = null;
+    for (const w of curtainWords) {
+      const top = w.offsetTop;
+      if (!cur || Math.abs(top - cur.top) > 8) {
+        cur = { top, words: [] };
+        curtainLines.push(cur);
+      }
+      cur.words.push(w);
+    }
+  }
+  groupCurtainLines();
+  window.addEventListener('resize', groupCurtainLines);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(groupCurtainLines);
+
+  let last = performance.now();
+  let auto = 0;                            // auto rotation angle (ring mode only)
+
+  // --- corridor enter / exit ---
+  function enterCorridor() {
+    if (corridorMode) return;
+    corridorMode = true;
+    corridorBlendTarget = 1;
+    corridorScroll = 0;
+    corridorScrollTarget = 0;
+    corridorDepth = 0;
+    scene.fog = corridorFog;
+    scene.background = new THREE.Color(0x050505);
+    for (const L of corridorLights) L.light.intensity = 0.55;
+    document.querySelectorAll('.site-nav').forEach(n => n.classList.add('corridor'));
+    document.body.classList.add('in-corridor');
+  }
+  function exitCorridor() {
+    if (!corridorMode) return;
+    corridorMode = false;
+    corridorBlendTarget = 0;
+    corridorScroll = 0;
+    corridorScrollTarget = 0;
+    corridorDepth = 0;
+    scene.fog = null;
+scene.background = new THREE.Color(0xfbfcfa);
+    for (const L of corridorLights) L.light.intensity = 0;
+    document.querySelectorAll('.site-nav').forEach(n => n.classList.remove('corridor'));
+    document.body.classList.remove('in-corridor');
+    scroll = 0;
+    scrollV = 0;
+  }
+
+  // --- click: card → corridor, × → exit ---
+  window.addEventListener('click', (e) => {
+    if (e.target.closest('.close-btn')) { exitCorridor(); return; }
+    if (corridorMode) return;
+    if (scroll > 1) return;
+    if (!hoverCard) return;
+    enterCorridor();
+  });
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && corridorMode) exitCorridor();
+  });
+
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    smx += (mx - smx) * (1 - Math.exp(-dt * 4));
+    smy += (my - smy) * (1 - Math.exp(-dt * 4));
+
+    // инерция: скорость затухает, scroll интегрирует скорость (мягкий выкат)
+    scrollV *= Math.exp(-dt * 2.2);          // плавный выкат
+    scroll += scrollV * dt;
+    if (scroll < 0) { scroll = 0; scrollV = 0; }
+    if (scroll > SCROLL_MAX) { scroll = SCROLL_MAX; scrollV = 0; }
+
+    // apply each photo's real proportions once its image has loaded
+    for (const c of cards) {
+      if (!c.done) {
+        const im = c.mesh.material.map.image;
+        if (im && im.width) setAspect(c, im.height / im.width);
+      }
+    }
+
+    const u = Math.min(1, scroll / UNFOLD_DIST);          // 0 = ring, 1 = tape
+    // лента не едет вбок на 2-м экране (скрыта шторкой) вЂ” не тратим работу
+    const tapeX = scroll < UNFOLD_DIST ? 0 : Math.max(0, scroll - UNFOLD_DIST - RISE_DIST);
+    auto += ROY * (1 - u) * dt;              // экран 1: кольцо вращается, наведение не тормозит
+
+    // Лента разворачивается в синей зоне (0..UNFOLD_DIST) — там и рендерим её.
+    // Как только лента развернута и стоит, тяжёлый WebGL-цикл выключаем — канвас
+    // хранит готовый кадр, а скролл после 10 не грузится (нет "падения" скорости).
+    const sceneFade = corridorBlend > 0.01 ? 1 : Math.max(0, Math.min(1, (UNFOLD_DIST - scroll) / 3));
+    renderer.domElement.style.opacity = String(sceneFade);
+    const sceneLive = sceneFade > 0.001 || corridorBlend > 0.001;
+
+    // corridor blend smoothing
+    corridorBlend += (corridorBlendTarget - corridorBlend) * (1 - Math.exp(-dt * 2.5));
+    if (corridorMode) {
+      corridorDepth += (corridorScrollTarget - corridorDepth) * (1 - Math.exp(-dt * 6));
+    }
+    // hide HTML overlays in corridor mode
+    if (corridorBlend > 0.01) {
+      curtainEl.style.opacity = '0';
+      curtainEl.style.pointerEvents = 'none';
+      stackEl.style.opacity = '0';
+      stackEl.style.pointerEvents = 'none';
+      if (eventTitle) eventTitle.style.display = 'none';
+    } else {
+      curtainEl.style.opacity = '';
+      curtainEl.style.pointerEvents = 'none';
+      stackEl.style.opacity = '';
+      stackEl.style.pointerEvents = 'none';
+      if (eventTitle) eventTitle.style.display = '';
+    }
+    if (sceneLive && !window.__noWebGL) {
+      const mid = (NUM - 1) / 2;
+      for (let ci = 0; ci < cards.length; ci++) {
+        const c = cards[ci];
+        // ring position (auto-rotated)
+        const effAng = c.ang + auto;
+        const rx = Math.sin(effAng) * radius;
+        const rz = Math.cos(effAng) * radius;
+        // tape position (centred line, pans sideways)
+        const tx = (c.ang / (Math.PI * 2)) * NUM;           // logical index 0..NUM
+        const px = (tx - mid) * spacingUnit - tapeX;
+        const py = 0;
+
+        // ring/tape position
+        let posX = rx + (px - rx) * u;
+        let posY = py;
+        let posZ = rz + (0 - rz) * u;
+        let rotY = (c.ang + auto) + (0 - (c.ang + auto)) * u;
+
+        // corridor position
+        if (corridorBlend > 0.001) {
+          const side = ci % 2 === 0 ? -1 : 1;
+          const cx = side * CORRIDOR_SIDE_SPREAD;
+          const cy = CORRIDOR_CAM_Y;
+          let cz = -(ci + 1) * CORRIDOR_CARD_GAP;
+          const n = Math.floor((-corridorDepth - cz) / CORRIDOR_LOOP);
+          cz += n * CORRIDOR_LOOP;
+          while (cz + corridorDepth < -30) cz += CORRIDOR_LOOP;
+          while (cz + corridorDepth > 30) cz -= CORRIDOR_LOOP;
+
+          posX = posX + (cx - posX) * corridorBlend;
+          posY = posY + (cy - posY) * corridorBlend;
+          posZ = posZ + (cz - posZ) * corridorBlend;
+          rotY = rotY + (0 - rotY) * corridorBlend;
+        }
+
+        c.group.position.set(posX, posY, posZ);
+        c.group.rotation.y = rotY;
+
+        // hover "stick" — works in both ring and corridor modes
+        const on = c === hoverCard;
+        const k = 1 - Math.exp(-dt * 10);
+        const stickX = corridorBlend > 0.5 ? smx * 0.15 : smx * 0.25;
+        const stickOff = corridorBlend > 0.5 ? smx * 0.18 : smx * 0.3;
+        const stickLift = corridorBlend > 0.5 ? 0.08 : 0.15;
+        c.lean += ((on ? stickX : 0) - c.lean) * k;
+        c.off  += ((on ? stickOff : 0) - c.off) * k;
+        c.lift += ((on ? stickLift : 0) - c.lift) * k;
+        c.ovT  += ((on ? 0 : OVERLAY) - c.ovT) * k;
+        c.wrap.rotation.y = c.lean;
+        c.wrap.position.set(c.off, c.lift, 0);
+        c.overlay.material.opacity = c.ovT;
+      }
+
+      ring.rotation.x = -smy * TILT * (1 - u) * (1 - corridorBlend);
+      ring.rotation.z = smx * TILT * (1 - u) * (1 - corridorBlend);
+      ring.rotation.y = 0;
+
+      // camera: lerp between ring and corridor
+      let camX = smx * 0.6;
+      let camY = 1.5 - smy * 0.5;
+      let camZ = 14;
+      if (corridorBlend > 0.001) {
+        camX = camX + (0 - camX) * corridorBlend;
+        camY = camY + (CORRIDOR_CAM_Y - camY) * corridorBlend;
+        camZ = camZ + (-corridorDepth - camZ) * corridorBlend;
+      }
+      camera.position.set(camX, camY, camZ);
+      if (corridorBlend > 0.5) {
+        camera.lookAt(0, CORRIDOR_CAM_Y, -corridorDepth - 10);
+      } else {
+        camera.lookAt(0, -0.45, 0);
+      }
+
+      // corridor lights follow the camera
+      if (corridorBlend > 0.01) {
+        for (const L of corridorLights) {
+          let lz = L.base + Math.floor((-corridorDepth - L.base) / CORRIDOR_LIGHT_LOOP) * CORRIDOR_LIGHT_LOOP;
+          while (lz + corridorDepth > CORRIDOR_LIGHT_LOOP) lz -= CORRIDOR_LIGHT_LOOP;
+          while (lz + corridorDepth < -CORRIDOR_LIGHT_LOOP) lz += CORRIDOR_LIGHT_LOOP;
+          L.light.position.set(0, CORRIDOR_CAM_Y + 1.3, lz);
+        }
+      }
+    }
+
+    // ---- экран 2: шторка поднимается снизу, текст заливается построчно ----
+    // Стартуем пока кольцо ещё разворачивается (на 60% синей зоны), единый отсчёт для
+    // шторки, текста и заливки — без рывка.
+    // --- единый линейный поток (всё как в синей зоне) ---
+    // Шторка (фон) и текст едут линейно от scroll в постоянной пропорции (×0.7),
+    // никакого ease — одинаковая скорость во всех зонах, без стыков.
+    // --- единый линейный поток: глобальный scroll, каждый слой = p * коэффициент ---
+    // Никаких задержек старта и кусков с разной скоростью — все стартуют вместе и
+    // едут с постоянной (константной) скоростью за итерацию.
+    // --- премиум-скролл: один scroll, каждая вещь = scroll * константа ---
+    // s — просто накопленная прокрутка от старта экрана 2.
+    const s = Math.max(0, scroll - CURTAIN_START);
+
+    // Текст миссии: едет вверх со шторкой, проявляется из фейда в начале прокрутки.
+    curtainText.style.transform = `translateY(${-s * 0.03 * window.innerHeight}px)`;
+    const fadeIn = Math.min(1, Math.max(0, (s - 5) / 3));    // текст проявляется через фейд
+    curtainText.style.opacity = fadeIn;
+
+    // Блок "о проекте": едет и проявляется синхронно с текстом миссии.
+    const aboutEl = document.getElementById('curtain-about');
+    if (aboutEl) {
+      aboutEl.style.transform = `translateY(${-s * 0.03 * window.innerHeight}px)`;
+      aboutEl.style.opacity = fadeIn;
+    }
+
+    // скрываем теглайн и год при появлении шторки
+    const hideUI = Math.min(1, Math.max(0, s / 4));
+    taglineEl.style.opacity = 1 - hideUI;
+    yearEl.style.opacity = 1 - hideUI;
+    if (mainTitleEl) mainTitleEl.style.opacity = 1 - Math.min(1, hideUI * 2);
+
+    // --- два хедера: белый поднимается, уходит за край, там подменяется
+    // чёрным, который плавно (ease-out) падает обратно ---
+    const UP_PX = 120;
+    const up = Math.min(1, Math.max(0, s / 4));            // экран 1 → белый уходит вверх (s 0..4)
+    const down = Math.min(1, Math.max(0, (s - 8) / 3));    // падает когда фон уже полностью чёрный (s 8..11)
+    const easeOut = 1 - (1 - down) * (1 - down);           // ease-out: мягко замедляется книзу
+    // Пользователь подобен классике: скролл вниз — шапка прячется, скролл вверх — выезжает обратно.
+    const hTo = scrollV > 0.02 ? 1 : (scrollV < -0.02 ? 0 : hHide);
+    hHide += (hTo - hHide) * (1 - Math.exp(-dt * 5));
+    const H_PX = 120;
+    const whiteY = -(up * UP_PX) - hHide * H_PX;
+    const darkY = -UP_PX * (1 - easeOut) - hHide * H_PX;
+    headerWhite.style.transform = `translateY(${whiteY}px)`;
+    headerDark.style.transform = `translateY(${darkY}px)`;
+    // подмена наверху, когда белый скрылся за краем — перекраски не видно
+    const swapped = up >= 1;
+    headerWhite.style.opacity = swapped ? 0 : 1;
+    headerDark.style.visibility = swapped ? 'visible' : 'hidden';
+    headerDark.style.opacity = swapped ? 1 : 0;
+    document.body.classList.toggle('nav-dark', swapped);
+
+    // Шторка (миссия): выезжает снизу и уезжает вверх. Без фейда — только физическое движение.
+    const curtainY = (1.2 - s * 0.14) * window.innerHeight;
+    curtainEl.style.transform = `translateY(${curtainY}px)`;
+
+    // Фото на шторке (фото2): стоит ниже миссии (top:82vh), скроллится вместе
+    // со шторкой. На втором экране (миссия) скрыто. Когда верх фото2 доезжает до
+    // верха фото1 (18vh), оно останавливается — дальше компенсируем уезд шторки и
+    // фото2 стоит на месте, а шторка "стирает" его. Параллакс "было/стало".
+    const curtainPhoto = document.querySelector('.curtain-photo');
+    if (curtainPhoto) {
+      const h = window.innerHeight;
+      const top2 = 0.82 * h + curtainY;          // текущий верх фото2 на экране
+      // Фото шторки останавливается ровно там, где потом встанет афиша (угол-в-угол):
+      // верх = центр экрана + половина шапки − половина высоты фото (та же 64vh/64vw).
+      const ph = Math.min(0.64 * h, 0.64 * window.innerWidth * 814 / 584);
+      const stopTop = h / 2 + headerH / 2 - ph / 2;
+      const shift = top2 < stopTop ? stopTop - top2 : 0;
+      curtainPhoto.style.transform = `translateX(-50%) translateY(${shift}px)`;
+      const show = Math.min(1, Math.max(0, (curtainY < 0 ? -curtainY / (0.30 * h) : 0)));
+      curtainPhoto.style.opacity = String(show);
+    }
+
+    // Белая панель едет ровно за нижним краём шторки — синхронно,
+    // зазора между чёрным и белым быть не может.
+    const curtainBottom = curtainY + 170 * window.innerHeight / 100;
+    whiteFillEl.style.transform = `translateY(${curtainBottom}px)`;
+
+    // Body: чёрный пока шторка на экране, белый когда панель закрыла весь экран
+    document.body.style.background = curtainBottom > 0 ? '#000' : '#fff';
+
+    const v = 0;
+    curtainText.style.color = '#fff';
+    const fillProg = Math.min(1, Math.max(0, (s - 3) / 10));       // заливка стартует чуть раньше
+    {
+      const th = 255 - v;
+      const dim = Math.round(v + (th - v) * 0.3);
+      const full = `rgb(${th},${th},${th})`, dimC = `rgb(${dim},${dim},${dim})`;
+      const M = curtainLines.length;
+      for (let L = 0; L < M; L++) {
+        const line = curtainLines[L];
+        const K = line.words.length;
+        let lp = fillProg * M - L;
+        lp = lp < 0 ? 0 : lp > 1 ? 1 : lp;
+        for (let j = 0; j < K; j++) {
+          const w = line.words[j];
+          let x = lp * (K + 1) - j;
+          x = x < 0 ? 0 : x > 1 ? 1 : x;
+          const pct = ((x * 100) | 0);
+          if (w._pct === pct) continue;
+          w._pct = pct;
+          const inSub = w.closest('.t-sub');
+          const f = inSub ? 'rgb(108,108,108)' : full;
+          const d = inSub ? 'rgb(38,38,38)' : dimC;
+          w.style.backgroundImage = `linear-gradient(to right, ${f} ${pct}%, ${d} ${pct}%)`;
+        }
+      }
+    }
+
+    // ---- Афиша (экран 3): наслоение цельных блоков-карточек, новый блок
+    // поднимается снизу и закрывает текущий целиком (фото + контент вместе) ----
+    {
+      const N = stackCards.length;
+      const appear = Math.min(1, Math.max(0, (s - 8.4) / 3));
+
+      const STEP = 0.07 * window.innerHeight;    // лесенка между слоями (7vh)
+      const lerp = (a, b, t) => a + (b - a) * t;
+
+      const ready = s >= STACK_P0;
+
+      // Точка привязки/поворота блока — центр фото (как раньше центр постера):
+      // левый край фото = левый край блока, линия-бордер по верху фото.
+      const pivot = (el) => {
+        const im = el.querySelector('.poster');
+        return { w: (im && im.offsetWidth) || 0, h: (im && im.offsetHeight) || 0 };
+      };
+
+      if (!ready) {
+        // Первая карточка выезжает на место за скроллом; остальные не всплывают
+        // задником — каждая позже выезжает наслоением в ветке ready ниже.
+        for (let i = 0; i < N; i++) {
+          const el = stackCards[i];
+          const { w, h } = pivot(el);
+          if (i === 0) {
+            const scale = lerp(0.3, 1, appear);
+            const top = lerp(-2 * STEP, 0, appear);
+            const op = lerp(0, 1, appear);
+            el.style.visibility = appear > 0 && op > 0.001 ? 'visible' : 'hidden';
+            el.style.opacity = op.toFixed(3);
+            el.style.zIndex = String(28);
+            el.style.clipPath = 'none';
+            el.style.transition = 'none';
+            el.style.transform = `translate(${-w / 2}px, ${-h / 2 + top}px) scale(${scale.toFixed(4)})`;
+          } else {
+            el.style.visibility = 'hidden';
+            el.style.opacity = '0';
+            el.style.zIndex = String(28 - i);
+            el.style.clipPath = 'none';
+            el.style.transition = 'none';
+            el.style.transform = `translate(${-w / 2}px, ${-h / 2}px) scale(1)`;
+          }
+        }
+      } else {
+        // наслаивание «шторкой», как чёрная шторка выше: новая карточка целиком
+        // поднимается снизу и закрывает текущую, строго за скроллом (линейно).
+        const phase = Math.max(0, s - STACK_P0);
+        const TAIL = 1.0;                     // короткая пауза после ухода шторки
+        const SPAN = 3.5;                     // скролл-дистанция на один акт (линейно, без ease)
+
+        const actIdx = phase < TAIL ? -1 : Math.min(N - 2, Math.floor((phase - TAIL) / SPAN));
+        const ap = actIdx < 0 ? 0 : Math.max(0, Math.min(1, (phase - TAIL - actIdx * SPAN) / SPAN));
+        const outIdx = actIdx;                // последняя уложенная в стопку
+        const inIdx = actIdx + 1;             // новая — подъезжает снизу поверх
+
+        // Зазор между слоями стопки: каждая карточка остаётся на 20px ниже
+        // предыдущей, чтобы сверху выглядывала линия-бордер и край под ней —
+        // видно, что это стопка, а не одна карточка.
+        const STACK_GAP = 20;
+
+        for (let i = 0; i < N; i++) {
+          const el = stackCards[i];
+          const { w, h } = pivot(el);
+          let top = 0, vis = false;
+          if (actIdx < 0) {
+            if (i === 0) { top = 0; vis = true; }        // первое событие стоит
+          } else if (i === inIdx) {
+            top = (1 - ap) * h + inIdx * STACK_GAP;      // шторка: полный блок снизу вверх
+            vis = true;
+          } else if (i <= outIdx) {
+            top = i * STACK_GAP;                         // уже в стопке — с зазором 20px
+            vis = true;
+          }
+          el.style.visibility = vis ? 'visible' : 'hidden';
+          el.style.opacity = '1';
+          el.style.zIndex = String(10 + i + (i === inIdx ? 1 : 0));
+          el.style.clipPath = 'none';
+          el.style.transition = 'none';
+          el.style.transform = `translate(${-w / 2}px, ${-h / 2 + top}px) scale(1)`;
+          // Белая тонировка закрытой карточки: когда новая перекрыла её на
+          // половину (ap >= 0.5), старая затирается белым 0 → 50%, потом остаётся.
+          const we = el.querySelector('.e-wash');
+          if (we) {
+            let wsh = '0';
+            if (actIdx >= 0 && i < inIdx) {
+              wsh = i < outIdx ? '0.5' : (ap <= 0.5 ? 0 : Math.min(0.5, (ap - 0.5) / 0.5 * 0.5)).toFixed(3);
+            }
+            we.style.opacity = wsh;
+          }
+        }
+      }
+      // Заголовок-раздел «События мануфактуры»: появляется когда шторка
+      // реально приоткрыла экран, пропадает когда возвращается.
+      if (eventTitle) {
+        const titleOpen = curtainBottom <= 620;
+        if (titleOpen && !titleShown) {
+          titleShown = true;
+          eventTitle.classList.add('show');
+        } else if (!titleOpen && titleShown) {
+          titleShown = false;
+          eventTitle.classList.remove('show');
+        }
+      }
+      stackEl.style.perspective = '';
+    }
+
+    // ---- Галерея (экран 4): продолжение страницы после стопки афиш ----
+    // Никакой шторки-оверлея над афишами. Когда последняя карточка стека
+    // легла, весь блок «События + стопка» и страница каталога едут вверх
+    // одним сдвигом (как обычный скролл контента). Обратный скролл просто
+    // показывает заголовок «События» и всю стопку снова.
+    if (gPane) {
+      const gEnd = STACK_P0 + 1 + 3.5 * (stackCards.length - 1);  // момент, когда последняя афиша легла
+      const started = s >= gEnd;
+      gPane.style.visibility = started ? 'visible' : 'hidden';
+      if (started) {
+        const rest = Math.max(0, s - gEnd);
+        const H = Math.max(0, galleryPage ? galleryPage.offsetHeight : 0);
+        const innerH = innerHeight;
+        // Единый темп со 2-м экраном (эталон): 1 scroll-единица = 0.14*innerH px.
+        // Галерея на каждый минувший scroll-единиц от gEnd сдвигается на столько же —
+        // как любой контент на 1-2 экранах. Никаких pan-нормализаций на бюджет.
+        const k = 0.14 * innerH;                       // px на scroll-единицу (эталон экрана 2)
+        let scr = rest * k;                            // сколько px уже прокручено галереей
+        // Конец прокрутки: низ всей страницы (конец блока «Авторы») встаёт ровно
+        // на низ экрана. Скролл-трансформ лёг на страницу, чья статическая позиция
+        // уже смещена на offsetTop (margin-top первого ребёнка схлопнулся наружу),
+        // поэтому учесть его: gsPx = innerH - scr, низ страницы = offsetTop + gsPx + H
+        // ⇒ scrMax = H + offsetTop.
+        const scrMax = Math.max(0, H + galleryPage.offsetTop);
+        const FOOT_CURTAIN_PX = footBg ? footBg.offsetHeight : 0;   // путь шторки = высота баннера
+        const scrAll = Math.min(scr, scrMax + FOOT_CURTAIN_PX);
+        scr = Math.min(scr, scrMax);                   // страница замирает после scrMax
+        const gsPx = (innerH - scr).toFixed(1);        // вверх → галерея въезжает снизу
+        const stPx = (-scr).toFixed(1);                // стопка уезжает вверх на столько же
+        if (galleryPage) galleryPage.style.transform = `translateY(${gsPx}px)`;
+        if (stackEl) stackEl.style.transform = `translateY(${stPx}px)`;
+        if (eventTitle) eventTitle.style.transform = `translateY(calc(-50% + ${stPx}px))`;
+        // Шторка футера: контент подвала статичен (страница уже замерла), а
+        // фото-баннер уезжает вверх, когда скролл ушёл за scrMax. Где-то на
+        // середине пути под ним показывается слоган, к концу — весь подвал.
+        if (footBg) {
+          const lift = Math.max(0, Math.min(1, (scrAll - scrMax) / (FOOT_CURTAIN_PX || 1)));
+          footBg.style.transform = `translateY(${(-lift * footBg.offsetHeight).toFixed(1)}px)`;
+        }
+        // Параллакс: сдвиг привязан к позиции картинки относительно центра
+        // экрана — пока страница едет, каждая карточка ощутимо скользит
+        // внутри своей рамки. Коэффициент у карточки свой (data-par).
+        const vc = innerH / 2;
+        for (const im of galleryGrid.querySelectorAll('.g-img')) {
+          const wrapH = im.parentElement.getBoundingClientRect().height;
+          const lim = Math.max(6, wrapH * 0.06);          // лимит от высоты рамки — края не выползают
+          const r = im.getBoundingClientRect();
+          const off = r.top + r.height / 2 - vc;          // удаление центра картинки от центра экрана
+          const p = parseFloat(im.dataset.par || '0');
+          let y = off * 0.04 * p;
+          y = Math.max(-lim, Math.min(lim, y));
+          im.style.transform = `translateY(${y.toFixed(1)}px)`;
+        }
+        gPane.classList.add('open');
+        gPane.setAttribute('aria-hidden', 'false');
+        // Параллакс ленты bg: лента — обычный блок страницы, едет вместе с ней.
+        // Сдвиг img внутри рамки по позиции относительно центра экрана.
+        if (bgImg && galleryBg) {
+          const wrapH = galleryBg.getBoundingClientRect().height;
+          const limBg = Math.max(8, wrapH * 0.08);
+          const rb = bgImg.getBoundingClientRect();
+          const bOff = rb.top + rb.height / 2 - vc;
+          let by = bOff * 0.04 * 1.3;
+          by = Math.max(-limBg, Math.min(limBg, by));
+          bgImg.style.transform = `translateY(${by.toFixed(1)}px)`;
+        }
+        // Параллакс картинки футера: тот же эффект, что и у ленты bg после событий.
+        // Шторка-баннер: скроллится как весь футер (обычный блок страницы),
+        // просто выше контента. Параллакс картинки футера — тот же эффект,
+        // что и у ленты bg после событий.
+        if (footBgImg) {
+          const wrap = footBgImg.parentElement;
+          const wrapH = wrap.getBoundingClientRect().height;
+          const limF = Math.max(8, wrapH * 0.08);
+          const rf = footBgImg.getBoundingClientRect();
+          const fOff = rf.top + rf.height / 2 - vc;
+          let fy = fOff * 0.04 * 1.3;
+          fy = Math.max(-limF, Math.min(limF, fy));
+          footBgImg.style.transform = `translateY(${fy.toFixed(1)}px)`;
+        }
+        // Лёгкий параллакс подвала: картинка, логотип, правый блок и слоган
+        // скользят с разной скоростью от центра экрана — чуть живее, чем лента.
+        if (footEl) {
+          const footItems = [
+            { el: footEl.querySelector('.foot-hero'),     p: 1.3 },
+            { el: footEl.querySelector('.foot-manuf'),    p: 0.4 },
+            { el: footEl.querySelector('.foot-right'),    p: 0.8 },
+            { el: footEl.querySelector('.foot-mission'),  p: 0.5 }
+          ];
+          for (const it of footItems) {
+            if (!it.el) continue;
+            const wrapH = it.el.getBoundingClientRect().height;
+            const lim = Math.max(4, (wrapH || 200) * 0.05);
+            const r = it.el.getBoundingClientRect();
+            const off = r.top + r.height / 2 - vc;
+            let y = off * 0.04 * it.p;
+            y = Math.max(-lim, Math.min(lim, y));
+            if (it.el.classList.contains('foot-manuf')) {
+              footParY = y;
+              it.el.style.transform = `translateY(${y.toFixed(1)}px) scale(${footScale.toFixed(4)})`;
+            } else if (it.el.classList.contains('foot-mission')) {
+              it.el.style.transform = `translateY(${y.toFixed(1)}px)`;
+            } else {
+              it.el.style.transform = `translateY(${y.toFixed(1)}px)`;
+            }
+          }
+        }
+      } else {
+        gPane.classList.remove('open');
+        gPane.setAttribute('aria-hidden', 'true');
+        if (stackEl) stackEl.style.transform = '';
+        if (eventTitle) eventTitle.style.transform = '';
+        if (galleryPage) galleryPage.style.transform = '';
+        for (const im of galleryGrid.querySelectorAll('.g-img')) im.style.transform = '';
+        if (bgImg) bgImg.style.transform = '';
+        if (footBgImg) footBgImg.style.transform = '';
+        footParY = 0;
+        if (footEl) {
+          const fh = footEl.querySelector('.foot-hero');
+          const fr = footEl.querySelector('.foot-right');
+          const fm = footEl.querySelector('.foot-mission');
+          const mf = footEl.querySelector('.foot-manuf');
+          if (fh) fh.style.transform = '';
+          if (fr) fr.style.transform = '';
+          if (fm) fm.style.transform = '';
+          if (mf) mf.style.transform = `translateY(0px) scale(${footScale.toFixed(4)})`;
+        }
+      }
+    }
+
+    updateDebug();
+    if (sceneLive) renderer.render(scene, camera);
+
+    // точка за курсором: плавно догоняет позицию мыши (инерция, как Obys)
+    if (cursorDot.classList.contains('on')) {
+      dmx += (pmx - dmx) * 0.15;
+      dmy += (pmy - dmy) * 0.15;
+      dScale += (pScale - dScale) * 0.15;
+      cursorDot.style.transform = `translate3d(${dmx.toFixed(1)}px, ${dmy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${dScale.toFixed(2)})`;
+    }
+
+    requestAnimationFrame(frame);
+  }
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

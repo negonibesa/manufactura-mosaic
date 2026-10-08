@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Cursor dot trail</title>
+<style>
+  html, body { height:100%; margin:0; background:#0a0a0a; cursor:none; overflow:hidden; }
+  .dot {
+    position: fixed;
+    top: 0; left: 0;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    pointer-events: none;
+    will-change: transform, opacity;
+    transform: translate(-50%, -50%);
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // ----- configurable -----
+  const DOT_COUNT   = 14;      // how many dots in the chain
+  const EASE        = 0.22;    // 0..1, how fast each dot catches its target (higher = snappier)
+  const SIZE_FALLOFF = 0.94;   // each dot in the chain is a bit smaller than the previous
+  const FADE_FALLOFF  = 0.055; // and a bit more transparent
+
+  const dots = [];
+  for (let i = 0; i < DOT_COUNT; i++) {
+    const el = document.createElement('div');
+    el.className = 'dot';
+    const scale = Math.pow(SIZE_FALLOFF, i);
+    el.style.width = el.style.height = `${10 * scale}px`;
+    el.style.opacity = Math.max(0.08, 1 - i * FADE_FALLOFF);
+    document.body.appendChild(el);
+    dots.push({ el, x: 0, y: 0 });
+  }
+
+  // real cursor target (the head of the chain follows this directly)
+  const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  function animate() {
+    let targetX = mouse.x;
+    let targetY = mouse.y;
+
+    dots.forEach((dot) => {
+      // each dot eases toward the position of the one in front of it —
+      // this is what creates the increasing lag down the chain
+      dot.x += (targetX - dot.x) * EASE;
+      dot.y += (targetY - dot.y) * EASE;
+      dot.el.style.transform = `translate(-50%, -50%) translate(${dot.x}px, ${dot.y}px)`;
+
+      targetX = dot.x;
+      targetY = dot.y;
+    });
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+</script>
+</body>
+</html>

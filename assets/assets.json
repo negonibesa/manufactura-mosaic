@@ -1,0 +1,2026 @@
+{
+  "schemaVersion": 2,
+  "root": "286:181",
+  "rootName": "МАНУФАКТУРА",
+  "roots": [
+    {
+      "id": "106:347",
+      "name": "Card"
+    },
+    {
+      "id": "38:445",
+      "name": "Frame 2131328944"
+    },
+    {
+      "id": "153:933",
+      "name": "Footer"
+    },
+    {
+      "id": "38:396",
+      "name": "Autors"
+    },
+    {
+      "id": "252:2474",
+      "name": "Мануфактура"
+    },
+    {
+      "id": "38:447",
+      "name": "image 102"
+    },
+    {
+      "id": "38:464",
+      "name": "image 102"
+    },
+    {
+      "id": "38:481",
+      "name": "image 102"
+    },
+    {
+      "id": "38:498",
+      "name": "image 102"
+    },
+    {
+      "id": "38:515",
+      "name": "image 102"
+    },
+    {
+      "id": "38:532",
+      "name": "image 102"
+    },
+    {
+      "id": "38:549",
+      "name": "image 102"
+    },
+    {
+      "id": "273:93",
+      "name": "image 147"
+    },
+    {
+      "id": "235:2296",
+      "name": "Background Image"
+    },
+    {
+      "id": "286:181",
+      "name": "МАНУФАКТУРА"
+    }
+  ],
+  "assets": [
+    {
+      "sourceIdentity": "figma-image:2427478e282c119b6a523073ada1b573c56fce62",
+      "contentDigest": "sha256:f456d16738c2d0dfbbaffcc09f6bb8c313bde5ba9956569ed8332140aa1d0603",
+      "semanticLabel": "cdf75f0e56112bb68e61114a261aa2cb 17",
+      "file": "image-2427478e282c119b6a523073.jpg",
+      "kind": "image",
+      "imageHash": "2427478e282c119b6a523073ada1b573c56fce62",
+      "placements": [
+        {
+          "nodeId": "106:349",
+          "name": "cdf75f0e56112bb68e61114a261aa2cb 17",
+          "width": 454,
+          "height": 344,
+          "x": 0,
+          "y": 0,
+          "rootX": 57,
+          "rootY": 57,
+          "coordinateSpace": "export-root",
+          "rootId": "106:347",
+          "parent": "Card / Card Image Container",
+          "parentId": "106:348",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:457",
+          "name": "image 145",
+          "width": 92,
+          "height": 116,
+          "x": 218,
+          "y": 0,
+          "rootX": 1538,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:445",
+          "parent": "Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "153:934",
+          "name": "Background Image",
+          "width": 1920,
+          "height": 575,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "153:933",
+          "parent": "Footer",
+          "parentId": "153:933",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:457",
+          "name": "image 145",
+          "width": 92,
+          "height": 116,
+          "x": 218,
+          "y": 0,
+          "rootX": 1598,
+          "rootY": 338,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328948 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:507",
+          "name": "image 147",
+          "width": 110,
+          "height": 116,
+          "x": 178,
+          "y": 0,
+          "rootX": 1557,
+          "rootY": 926,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328953 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:505",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:526",
+          "name": "image 146",
+          "width": 111,
+          "height": 116,
+          "x": 308,
+          "y": 0,
+          "rootX": 1687,
+          "rootY": 1122,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328951 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:522",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:543",
+          "name": "image 146",
+          "width": 111,
+          "height": 116,
+          "x": 308,
+          "y": 0,
+          "rootX": 1687,
+          "rootY": 1318,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328952 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:539",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "235:2296",
+          "name": "Background Image",
+          "width": 1920,
+          "height": 575,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "235:2296",
+          "parent": "",
+          "parentId": "153:933",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:df7b0bcf45a1b5d7ae9eeefaf12ee35910b0c7db",
+      "contentDigest": "sha256:a8d7e4a9c5ec07aa9a1fae2238191ea5b3f6e6e8feedc78c5a6c5955d4490671",
+      "semanticLabel": "image 148",
+      "file": "image-df7b0bcf45a1b5d7ae9eeefa.png",
+      "kind": "image",
+      "imageHash": "df7b0bcf45a1b5d7ae9eeefaf12ee35910b0c7db",
+      "optimizedForScale": 2,
+      "pixelWidth": 184,
+      "pixelHeight": 233,
+      "sourcePixelWidth": 432,
+      "sourcePixelHeight": 546,
+      "placements": [
+        {
+          "nodeId": "38:455",
+          "name": "image 148",
+          "width": 92,
+          "height": 116,
+          "x": 0,
+          "y": 0,
+          "rootX": 1320,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:445",
+          "parent": "Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:458",
+          "name": "image 146",
+          "width": 92,
+          "height": 73,
+          "x": 327,
+          "y": 0,
+          "rootX": 1647,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:445",
+          "parent": "Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:455",
+          "name": "image 148",
+          "width": 92,
+          "height": 116,
+          "x": 0,
+          "y": 0,
+          "rootX": 1380,
+          "rootY": 338,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328948 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:458",
+          "name": "image 146",
+          "width": 92,
+          "height": 73,
+          "x": 327,
+          "y": 0,
+          "rootX": 1707,
+          "rootY": 338,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328948 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:9113b1251c4fcdbb08fe8e7c709421c6e536e7be",
+      "contentDigest": "sha256:569b625d04938c85f8ddd36b8dae4d8e83b4656765399c99e9e824feb29363e4",
+      "semanticLabel": "image 147",
+      "file": "image-9113b1251c4fcdbb08fe8e7c.png",
+      "kind": "image",
+      "imageHash": "9113b1251c4fcdbb08fe8e7c709421c6e536e7be",
+      "optimizedForScale": 2,
+      "pixelWidth": 225,
+      "pixelHeight": 180,
+      "sourcePixelWidth": 1080,
+      "sourcePixelHeight": 863,
+      "placements": [
+        {
+          "nodeId": "38:456",
+          "name": "image 147",
+          "width": 92,
+          "height": 90,
+          "x": 109,
+          "y": 0,
+          "rootX": 1429,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:445",
+          "parent": "Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:456",
+          "name": "image 147",
+          "width": 92,
+          "height": 90,
+          "x": 109,
+          "y": 0,
+          "rootX": 1489,
+          "rootY": 338,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328948 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:454",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:426893a7345ead4800d1ade5f87d4885e4996934",
+      "contentDigest": "sha256:80a981d0ea2f37052a872c7e2afdbb9d1c399b248d8af10154f0bf08774c39fb",
+      "semanticLabel": "image 102",
+      "file": "image-426893a7345ead4800d1ade5.png",
+      "kind": "image",
+      "imageHash": "426893a7345ead4800d1ade5f87d4885e4996934",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:447",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 18,
+          "coordinateSpace": "export-root",
+          "rootId": "38:445",
+          "parent": "Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:446",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:8c295755178fa343d58510dfee24ec1038e7c74b5ae1f0047a92b2aa3e44f288",
+      "contentDigest": "svg-visual-sha256:8c295755178fa343d58510dfee24ec1038e7c74b5ae1f0047a92b2aa3e44f288",
+      "semanticLabel": "Main Text Arrow Icon",
+      "file": "main-text-arrow-icon.svg",
+      "kind": "icon",
+      "placements": [
+        {
+          "nodeId": "153:1264",
+          "name": "Main Text Arrow Icon",
+          "width": 40,
+          "height": 40,
+          "frameSize": {
+            "w": 40,
+            "h": 40
+          },
+          "x": 0,
+          "y": 0,
+          "rootX": 1820,
+          "rootY": 741,
+          "coordinateSpace": "export-root",
+          "rootId": "153:933",
+          "parent": "Footer / Main Text Container / Read-more-variants",
+          "parentId": "153:1263",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:836b192789f319dc79a00273d5bec73d2616c21c4beda67bbe36577be6419bb8",
+      "contentDigest": "svg-visual-sha256:836b192789f319dc79a00273d5bec73d2616c21c4beda67bbe36577be6419bb8",
+      "semanticLabel": "Input Arrow Icon",
+      "file": "input-arrow-icon.svg",
+      "kind": "icon",
+      "placements": [
+        {
+          "nodeId": "153:1101",
+          "name": "Input Arrow Icon",
+          "width": 40,
+          "height": 40,
+          "frameSize": {
+            "w": 40,
+            "h": 40
+          },
+          "x": 0,
+          "y": 0,
+          "rootX": 401,
+          "rootY": 1041,
+          "coordinateSpace": "export-root",
+          "rootId": "153:933",
+          "parent": "Footer / Subscription Container / Input Container / Read-more-variants",
+          "parentId": "153:1100",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:6c755be96bc9dfaa4a6760976a2ed1997541e6ae",
+      "contentDigest": "sha256:cc347edcaaf5ca66d2d4c7189872b71a75a7152da3f3014ba46eac3248948f01",
+      "semanticLabel": "image 148",
+      "file": "image-6c755be96bc9dfaa4a676097.jpg",
+      "kind": "image",
+      "imageHash": "6c755be96bc9dfaa4a6760976a2ed1997541e6ae",
+      "placements": [
+        {
+          "nodeId": "38:557",
+          "name": "image 148",
+          "width": 112,
+          "height": 116,
+          "x": -89,
+          "y": 0,
+          "rootX": 1292,
+          "rootY": 1514,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328954 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:556",
+          "absolutePosition": true,
+          "overhang": true
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:d770ae490692fc93113d24e37915a304042f6961",
+      "contentDigest": "sha256:7f7e6fe47090df25fb6c60cdde42b8ff5ca58b351e948ea3dd1d65b2a11ec9cb",
+      "semanticLabel": "image 148",
+      "file": "image-d770ae490692fc93113d24e3.png",
+      "kind": "image",
+      "imageHash": "d770ae490692fc93113d24e37915a304042f6961",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:523",
+          "name": "image 148",
+          "width": 111,
+          "height": 116,
+          "x": -86,
+          "y": 0,
+          "rootX": 1293,
+          "rootY": 1122,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328951 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:522",
+          "absolutePosition": true,
+          "overhang": true
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:b2ed35d905d34bc3ce2d0a29cd52e1ec0a71d3cb",
+      "contentDigest": "sha256:0cc383661126c85463c1a72efca82db7b55ba1042a490f79db4d1a91d879d88f",
+      "semanticLabel": "image 147",
+      "file": "image-b2ed35d905d34bc3ce2d0a29.jpg",
+      "kind": "image",
+      "imageHash": "b2ed35d905d34bc3ce2d0a29cd52e1ec0a71d3cb",
+      "placements": [
+        {
+          "nodeId": "38:524",
+          "name": "image 147",
+          "width": 111,
+          "height": 116,
+          "x": 177,
+          "y": 0,
+          "rootX": 1556,
+          "rootY": 1122,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328951 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:522",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:08c7b9e4829800a3f031dc519d90409b76a3a731",
+      "contentDigest": "sha256:d87ac66cd662a24abb5c49611416088a913c503092c94700397ba20b54b42ae6",
+      "semanticLabel": "image 145",
+      "file": "image-08c7b9e4829800a3f031dc51.png",
+      "kind": "image",
+      "imageHash": "08c7b9e4829800a3f031dc519d90409b76a3a731",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:542",
+          "name": "image 145",
+          "width": 111,
+          "height": 116,
+          "x": 46,
+          "y": 0,
+          "rootX": 1425,
+          "rootY": 1318,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328952 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:539",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:ff5a2e009d0065049f09dfe3b9e23e577e635aa0",
+      "contentDigest": "sha256:8b9417b3db320a13d81e215f0a7728858ba13839991933ac07cd53fba9d68077",
+      "semanticLabel": "image 148",
+      "file": "image-ff5a2e009d0065049f09dfe3.jpg",
+      "kind": "image",
+      "imageHash": "ff5a2e009d0065049f09dfe3b9e23e577e635aa0",
+      "placements": [
+        {
+          "nodeId": "38:506",
+          "name": "image 148",
+          "width": 110,
+          "height": 116,
+          "x": -83,
+          "y": 0,
+          "rootX": 1296,
+          "rootY": 926,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328953 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:505",
+          "absolutePosition": true,
+          "overhang": true
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:4ac4f7476fb0756cb34269c150ac0d49137db057",
+      "contentDigest": "sha256:76df35409cbd6cc897b6122f0155a5127dd1bdf41969d6043c2bf7d7dd87e9ff",
+      "semanticLabel": "image 145",
+      "file": "image-4ac4f7476fb0756cb34269c1.png",
+      "kind": "image",
+      "imageHash": "4ac4f7476fb0756cb34269c150ac0d49137db057",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:508",
+          "name": "image 145",
+          "width": 110,
+          "height": 116,
+          "x": 48,
+          "y": 0,
+          "rootX": 1427,
+          "rootY": 926,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328953 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:505",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:4515875df190625342058071e4ec4cf1f92e8a62",
+      "contentDigest": "sha256:2498844e9ef98543aaf18e8d0c0cf66deb4838a034282ea9a4f58d8395f915fa",
+      "semanticLabel": "image 146",
+      "file": "image-4515875df190625342058071.jpg",
+      "kind": "image",
+      "imageHash": "4515875df190625342058071e4ec4cf1f92e8a62",
+      "placements": [
+        {
+          "nodeId": "38:509",
+          "name": "image 146",
+          "width": 110,
+          "height": 116,
+          "x": 309,
+          "y": 0,
+          "rootX": 1688,
+          "rootY": 926,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328953 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:505",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:540",
+          "name": "image 148",
+          "width": 111,
+          "height": 116,
+          "x": -85,
+          "y": 0,
+          "rootX": 1294,
+          "rootY": 1318,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328952 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:539",
+          "absolutePosition": true,
+          "overhang": true
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:c59609018966eadf4b2260dd176087c1e63561bf",
+      "contentDigest": "sha256:2cf2121bfb8371e01334c078abafa0ad717ba83d9ac13fadc138b11e805a44cd",
+      "semanticLabel": "image 148",
+      "file": "image-c59609018966eadf4b2260dd.png",
+      "kind": "image",
+      "imageHash": "c59609018966eadf4b2260dd176087c1e63561bf",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:472",
+          "name": "image 148",
+          "width": 92,
+          "height": 116,
+          "x": 0,
+          "y": 0,
+          "rootX": 1379,
+          "rootY": 534,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328949 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:471",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:474",
+          "name": "image 145",
+          "width": 92,
+          "height": 116,
+          "x": 218,
+          "y": 0,
+          "rootX": 1597,
+          "rootY": 534,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328949 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:471",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:558",
+          "name": "image 147",
+          "width": 112,
+          "height": 116,
+          "x": 175,
+          "y": 0,
+          "rootX": 1556,
+          "rootY": 1514,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328954 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:556",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:560",
+          "name": "image 146",
+          "width": 112,
+          "height": 116,
+          "x": 307,
+          "y": 0,
+          "rootX": 1688,
+          "rootY": 1514,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328954 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:556",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:5ebd0ad7438dc40f6285f66667ee9880abfa3498",
+      "contentDigest": "sha256:cfea0cabe5431dd73bdb74fec1236ae4bf6ccd6de9e1f86200dc2a86ed580ad0",
+      "semanticLabel": "image 148",
+      "file": "image-5ebd0ad7438dc40f6285f666.png",
+      "kind": "image",
+      "imageHash": "5ebd0ad7438dc40f6285f66667ee9880abfa3498",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:489",
+          "name": "image 148",
+          "width": 92,
+          "height": 116,
+          "x": 109,
+          "y": 0,
+          "rootX": 1488,
+          "rootY": 730,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328950 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:488",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:b14c9701bbd922ebaac47c69f057e4fcb18ed15a",
+      "contentDigest": "sha256:6b560cecfde550e4271cccdf831e4960a87d472df10406ace31a8f7db8a5a510",
+      "semanticLabel": "image 145",
+      "file": "image-b14c9701bbd922ebaac47c69.png",
+      "kind": "image",
+      "imageHash": "b14c9701bbd922ebaac47c69f057e4fcb18ed15a",
+      "optimizedForScale": 2,
+      "pixelWidth": 232,
+      "pixelHeight": 232,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:491",
+          "name": "image 145",
+          "width": 92,
+          "height": 116,
+          "x": 327,
+          "y": 0,
+          "rootX": 1706,
+          "rootY": 730,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328950 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:488",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:9a28ad0276e151f4114a43cdef76f09ac5ac90f3",
+      "contentDigest": "sha256:23a0aabbe624c12779eaf1726969546f2a0cc874f845cba3b6c319c20e85bde3",
+      "semanticLabel": "image 147",
+      "file": "image-9a28ad0276e151f4114a43cd.jpg",
+      "kind": "image",
+      "imageHash": "9a28ad0276e151f4114a43cdef76f09ac5ac90f3",
+      "placements": [
+        {
+          "nodeId": "38:541",
+          "name": "image 147",
+          "width": 111,
+          "height": 85,
+          "x": 177,
+          "y": 0,
+          "rootX": 1556,
+          "rootY": 1318,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328952 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:539",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:4f5b21bc6f35005ea27e1eb1f7e4a74e188ba657",
+      "contentDigest": "sha256:f673e75aaf84968faf3b7686ce112abe774d703c030a8247c561eba782433bcf",
+      "semanticLabel": "image 145",
+      "file": "image-4f5b21bc6f35005ea27e1eb1.png",
+      "kind": "image",
+      "imageHash": "4f5b21bc6f35005ea27e1eb1f7e4a74e188ba657",
+      "optimizedForScale": 2,
+      "pixelWidth": 222,
+      "pixelHeight": 222,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:525",
+          "name": "image 145",
+          "width": 111,
+          "height": 80,
+          "x": 45,
+          "y": 0,
+          "rootX": 1424,
+          "rootY": 1122,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328951 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:522",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:d70758f5f0f6bd9f8f6b7367fc831ac537ede9e5",
+      "contentDigest": "sha256:d56dbd8af45604c79e9daa6a63acfeb64f9e2623c54d4d8ab1ddea5bd26d611c",
+      "semanticLabel": "image 147",
+      "file": "image-d70758f5f0f6bd9f8f6b7367.png",
+      "kind": "image",
+      "imageHash": "d70758f5f0f6bd9f8f6b7367fc831ac537ede9e5",
+      "optimizedForScale": 2,
+      "pixelWidth": 224,
+      "pixelHeight": 224,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:473",
+          "name": "image 147",
+          "width": 92,
+          "height": 90,
+          "x": 109,
+          "y": 0,
+          "rootX": 1488,
+          "rootY": 534,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328949 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:471",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:559",
+          "name": "image 145",
+          "width": 112,
+          "height": 87,
+          "x": 43,
+          "y": 0,
+          "rootX": 1424,
+          "rootY": 1514,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328954 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:556",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:468574fc71a0e0bb80d4f417628d82cb0d59cfe2",
+      "contentDigest": "sha256:bebc4a13f61d203fe0cdd8f449fe741eb92e25771a1ea87cba28ccab9c92eb06",
+      "semanticLabel": "image 147",
+      "file": "image-468574fc71a0e0bb80d4f417.png",
+      "kind": "image",
+      "imageHash": "468574fc71a0e0bb80d4f417628d82cb0d59cfe2",
+      "optimizedForScale": 2,
+      "pixelWidth": 184,
+      "pixelHeight": 184,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:490",
+          "name": "image 147",
+          "width": 92,
+          "height": 90,
+          "x": 0,
+          "y": 0,
+          "rootX": 1379,
+          "rootY": 730,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328950 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:488",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:1787a54d88bf14f21b14e11562056e77526be069",
+      "contentDigest": "sha256:76ece975f738a9ac6ef32d9a4d7fbffccf02859fa31a5ed05c69346a8cc5991e",
+      "semanticLabel": "image 146",
+      "file": "image-1787a54d88bf14f21b14e115.png",
+      "kind": "image",
+      "imageHash": "1787a54d88bf14f21b14e11562056e77526be069",
+      "optimizedForScale": 2,
+      "pixelWidth": 184,
+      "pixelHeight": 184,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:475",
+          "name": "image 146",
+          "width": 92,
+          "height": 73,
+          "x": 327,
+          "y": 0,
+          "rootX": 1706,
+          "rootY": 534,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328949 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:471",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:d9e11fd3ef616943ff2005cd02d9039c3afd49f9",
+      "contentDigest": "sha256:e0db1ecf5e2a9f66f04a93207b805e679ee545abf550254e259dafcb05cdc869",
+      "semanticLabel": "image 146",
+      "file": "image-d9e11fd3ef616943ff2005cd.png",
+      "kind": "image",
+      "imageHash": "d9e11fd3ef616943ff2005cd02d9039c3afd49f9",
+      "optimizedForScale": 2,
+      "pixelWidth": 184,
+      "pixelHeight": 184,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:492",
+          "name": "image 146",
+          "width": 92,
+          "height": 73,
+          "x": 218,
+          "y": 0,
+          "rootX": 1597,
+          "rootY": 730,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328950 / Frame 2131328944 / Frame 2131328945 / Frame 2131328943 / Frame 2131328940",
+          "parentId": "38:488",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:a98a73f2c4f0950cbbaf03b332524e347fec5af3",
+      "contentDigest": "sha256:7cedff6e04fcb4ce7725e9f38d7ace4af45c2cb889880dc69b6e1f8bc0b8b142",
+      "semanticLabel": "image 102",
+      "file": "image-a98a73f2c4f0950cbbaf03b3.png",
+      "kind": "image",
+      "imageHash": "a98a73f2c4f0950cbbaf03b332524e347fec5af3",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:447",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 356,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328948 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:446",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:447",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:447",
+          "parent": "",
+          "parentId": "38:446",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:44de36e4b1ea058c72ef72b31630de9afbfe5c5a",
+      "contentDigest": "sha256:4f7403352e7fd4b85442a8c823d7fedc5a7150356d7de079c8a0493979ef22ce",
+      "semanticLabel": "image 102",
+      "file": "image-44de36e4b1ea058c72ef72b3.png",
+      "kind": "image",
+      "imageHash": "44de36e4b1ea058c72ef72b31630de9afbfe5c5a",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:464",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 552,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328949 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:463",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:464",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:464",
+          "parent": "",
+          "parentId": "38:463",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:f77125386494bf67fb732817237ad96f7e55896d",
+      "contentDigest": "sha256:57bf72a5221926dbca2f1b9b4c93f40bac0335e3bc2ab9a53ad0004daee6c7e4",
+      "semanticLabel": "image 102",
+      "file": "image-f77125386494bf67fb732817.png",
+      "kind": "image",
+      "imageHash": "f77125386494bf67fb732817237ad96f7e55896d",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:481",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 748,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328950 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:480",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:481",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:481",
+          "parent": "",
+          "parentId": "38:480",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:594308d6773fbde56c4c229552517643e4cbd06a",
+      "contentDigest": "sha256:1f6429a0778c5f04094d293ba2857c389f13573632c57ed07790b748b821f47f",
+      "semanticLabel": "image 102",
+      "file": "image-594308d6773fbde56c4c2295.png",
+      "kind": "image",
+      "imageHash": "594308d6773fbde56c4c229552517643e4cbd06a",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:498",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 944,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328953 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:497",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:498",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:498",
+          "parent": "",
+          "parentId": "38:497",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:d028d5db8fe7aee76b97a8002ae016b9c2bc52ab",
+      "contentDigest": "sha256:7f30add0065dfadfc6c03ebdefdfcbe281d5dd629b42529c16d4cca430353933",
+      "semanticLabel": "image 102",
+      "file": "image-d028d5db8fe7aee76b97a800.png",
+      "kind": "image",
+      "imageHash": "d028d5db8fe7aee76b97a8002ae016b9c2bc52ab",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:515",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 1140,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328951 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:514",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:515",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:515",
+          "parent": "",
+          "parentId": "38:514",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:4fd37d15d256f41739e3ae16506ad2d1de54b035",
+      "contentDigest": "sha256:cb57bf1f690f66dcea9862cb96d5510cfe87ce3c7a3ea747fe695abe5fbac3b6",
+      "semanticLabel": "image 102",
+      "file": "image-4fd37d15d256f41739e3ae16.png",
+      "kind": "image",
+      "imageHash": "4fd37d15d256f41739e3ae16506ad2d1de54b035",
+      "optimizedForScale": 2,
+      "pixelWidth": 160,
+      "pixelHeight": 160,
+      "sourcePixelWidth": 1024,
+      "sourcePixelHeight": 1024,
+      "placements": [
+        {
+          "nodeId": "38:532",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 60,
+          "rootY": 1336,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955 / Frame 2131328952 / Frame 2131328944 / Frame 2131328942",
+          "parentId": "38:531",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:532",
+          "name": "image 102",
+          "width": 80,
+          "height": 80,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "38:532",
+          "parent": "",
+          "parentId": "38:531",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:605b6535c79d132caad6ffde73fe525b55cc3f9f36cc8821d36b780c8508f2b3",
+      "contentDigest": "svg-visual-sha256:605b6535c79d132caad6ffde73fe525b55cc3f9f36cc8821d36b780c8508f2b3",
+      "semanticLabel": "Мануфактура",
+      "file": "asset.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "153:892",
+          "name": "Мануфактура",
+          "width": 179,
+          "height": 17,
+          "x": 811,
+          "y": 4,
+          "rootX": 871,
+          "rootY": 20,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Header",
+          "parentId": "153:891",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:c6209eb169147a29595779bbfa4783c5e1f42b6a89efd2c1d583e2346bf70e98",
+      "contentDigest": "svg-visual-sha256:c6209eb169147a29595779bbfa4783c5e1f42b6a89efd2c1d583e2346bf70e98",
+      "semanticLabel": "Autors",
+      "file": "autors.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "38:460",
+          "name": "Vector 68",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 156,
+          "rootX": 60,
+          "rootY": 494,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:477",
+          "name": "Vector 67",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 352,
+          "rootX": 60,
+          "rootY": 690,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:494",
+          "name": "Vector 66",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 548,
+          "rootX": 60,
+          "rootY": 886,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:511",
+          "name": "Vector 65",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 744,
+          "rootX": 60,
+          "rootY": 1082,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:528",
+          "name": "Vector 64",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 940,
+          "rootX": 60,
+          "rootY": 1278,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        },
+        {
+          "nodeId": "38:545",
+          "name": "Vector 63",
+          "width": 1800,
+          "height": 1,
+          "x": 0,
+          "y": 1136,
+          "rootX": 60,
+          "rootY": 1474,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Frame 2131328955",
+          "parentId": "38:443",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:f39c56bd99c579dae3a840f2ac05caa16a313ce3e7f8224e7ac99c72238c117f",
+      "contentDigest": "svg-visual-sha256:f39c56bd99c579dae3a840f2ac05caa16a313ce3e7f8224e7ac99c72238c117f",
+      "semanticLabel": "Arrow 1",
+      "file": "arrow-1.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "230:2294",
+          "name": "Arrow 1",
+          "width": 40,
+          "height": 15,
+          "x": 676,
+          "y": 1378,
+          "rootX": 676,
+          "rootY": 1378,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors",
+          "parentId": "38:396",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:d330b590eaaf47cbaa0529b62514c762faea51c0d9f6981ed066b9877a90ff17",
+      "contentDigest": "svg-visual-sha256:d330b590eaaf47cbaa0529b62514c762faea51c0d9f6981ed066b9877a90ff17",
+      "semanticLabel": "Favorites Icon",
+      "file": "favorites-icon.svg",
+      "kind": "icon",
+      "placements": [
+        {
+          "nodeId": "153:912",
+          "name": "Favorites Icon",
+          "width": 24,
+          "height": 24,
+          "frameSize": {
+            "w": 24,
+            "h": 24
+          },
+          "x": 0,
+          "y": 0,
+          "rootX": 1668,
+          "rootY": 16,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Header / Profile Container / Favorites Container",
+          "parentId": "153:911",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:f14947686a193678d9744bbecb01a71aa0d4065bc6dcb895b33e1ae4cfc56c76",
+      "contentDigest": "svg-visual-sha256:f14947686a193678d9744bbecb01a71aa0d4065bc6dcb895b33e1ae4cfc56c76",
+      "semanticLabel": "Profile Icon",
+      "file": "profile-icon.svg",
+      "kind": "icon",
+      "placements": [
+        {
+          "nodeId": "153:914",
+          "name": "Profile Icon",
+          "width": 24,
+          "height": 24,
+          "frameSize": {
+            "w": 24,
+            "h": 24
+          },
+          "x": 160,
+          "y": 0,
+          "rootX": 1828,
+          "rootY": 16,
+          "coordinateSpace": "export-root",
+          "rootId": "38:396",
+          "parent": "Autors / Header / Profile Container",
+          "parentId": "153:910",
+          "absolutePosition": false,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:6ac18b878a340aab470dc6a74b8adba2c67fb05c7bc1a9cc780bfffea5c86c9e",
+      "contentDigest": "svg-visual-sha256:6ac18b878a340aab470dc6a74b8adba2c67fb05c7bc1a9cc780bfffea5c86c9e",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-6ac18b87.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2481",
+          "name": "Vector",
+          "width": 183,
+          "height": 169,
+          "x": 685,
+          "y": 0,
+          "rootX": 685,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:bdf0f7edcfde7f515a29a0013a356af05eefa4d7ee3050ed53afe7762e28e58e",
+      "contentDigest": "svg-visual-sha256:bdf0f7edcfde7f515a29a0013a356af05eefa4d7ee3050ed53afe7762e28e58e",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-bdf0f7ed.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2485",
+          "name": "Vector",
+          "width": 183,
+          "height": 169,
+          "x": 0,
+          "y": 0,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:c9aca7ae93d1eed2120fcd879cc053f81d47b784c55fde5abdb2116bc90e445e",
+      "contentDigest": "svg-visual-sha256:c9aca7ae93d1eed2120fcd879cc053f81d47b784c55fde5abdb2116bc90e445e",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-c9aca7ae.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2475",
+          "name": "Vector",
+          "width": 178,
+          "height": 169,
+          "x": 1622,
+          "y": 0,
+          "rootX": 1622,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "252:2480",
+          "name": "Vector",
+          "width": 178,
+          "height": 169,
+          "x": 853,
+          "y": 0,
+          "rootX": 853,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:8e34ec6bc239b6539a68f291602a1f5b446ad3685be271ae613db13086e8a232",
+      "contentDigest": "svg-visual-sha256:8e34ec6bc239b6539a68f291602a1f5b446ad3685be271ae613db13086e8a232",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-8e34ec6b.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2484",
+          "name": "Vector",
+          "width": 178,
+          "height": 169,
+          "x": 190,
+          "y": 0,
+          "rootX": 190,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:7f900adcd51562ecf95ded9c9bcdbc4be5eed4f7d0e1dcc5ecf500fcb5fc8c32",
+      "contentDigest": "svg-visual-sha256:7f900adcd51562ecf95ded9c9bcdbc4be5eed4f7d0e1dcc5ecf500fcb5fc8c32",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-7f900adc.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2477",
+          "name": "Vector",
+          "width": 160,
+          "height": 169,
+          "x": 1321,
+          "y": 0,
+          "rootX": 1321,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        },
+        {
+          "nodeId": "252:2482",
+          "name": "Vector",
+          "width": 160,
+          "height": 169,
+          "x": 540,
+          "y": 0,
+          "rootX": 540,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:8ba7b74bae4b3adf99e533803e247c023d73dad587436ac62f987ebc38ceee4e",
+      "contentDigest": "svg-visual-sha256:8ba7b74bae4b3adf99e533803e247c023d73dad587436ac62f987ebc38ceee4e",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-8ba7b74b.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2483",
+          "name": "Vector",
+          "width": 158,
+          "height": 169,
+          "x": 376,
+          "y": 0,
+          "rootX": 376,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:17841f0477e0744fad839af2b0da4309abea6d954ebeea63b666b622b6317739",
+      "contentDigest": "svg-visual-sha256:17841f0477e0744fad839af2b0da4309abea6d954ebeea63b666b622b6317739",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-17841f04.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2476",
+          "name": "Vector",
+          "width": 151,
+          "height": 169,
+          "x": 1488,
+          "y": 0,
+          "rootX": 1488,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:9c9912d67681f5bd8c35a2bd0064a627014b8623ec135508f9357dfa5a9773b8",
+      "contentDigest": "svg-visual-sha256:9c9912d67681f5bd8c35a2bd0064a627014b8623ec135508f9357dfa5a9773b8",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-9c9912d6.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2478",
+          "name": "Vector",
+          "width": 148,
+          "height": 169,
+          "x": 1178,
+          "y": 0,
+          "rootX": 1178,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:fe619c534b27e5e1662ca1696a00ffc6aa5d891ea70b38daad177887e0c28013",
+      "contentDigest": "svg-visual-sha256:fe619c534b27e5e1662ca1696a00ffc6aa5d891ea70b38daad177887e0c28013",
+      "semanticLabel": "Мануфактура",
+      "file": "asset-fe619c53.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "252:2479",
+          "name": "Vector",
+          "width": 144,
+          "height": 169,
+          "x": 1039,
+          "y": 0,
+          "rootX": 1039,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "252:2474",
+          "parent": "Мануфактура",
+          "parentId": "252:2474",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "figma-image:977f8c8f333df42a6650904ab5a93884f5b5c7ad",
+      "contentDigest": "sha256:7e077eb962c38aa939f8ce49b1f85a1c893868656dfb6ceb903b4c1442e140c7",
+      "semanticLabel": "image 147",
+      "file": "image-977f8c8f333df42a6650904a.png",
+      "kind": "image",
+      "imageHash": "977f8c8f333df42a6650904ab5a93884f5b5c7ad",
+      "placements": [
+        {
+          "nodeId": "273:93",
+          "name": "image 147",
+          "width": 261,
+          "height": 381,
+          "x": 830,
+          "y": 163,
+          "rootX": 0,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "273:93",
+          "parent": "",
+          "parentId": "252:2354",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:869e2baefd6211600a17559aabd4207801b911694589638827dc6d8722eb4f21",
+      "contentDigest": "svg-visual-sha256:869e2baefd6211600a17559aabd4207801b911694589638827dc6d8722eb4f21",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-869e2bae.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:188",
+          "name": "Vector",
+          "width": 207,
+          "height": 155,
+          "x": 677,
+          "y": 0,
+          "rootX": 677,
+          "rootY": 0,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:7cbfa907d1e2874a0ab93141891dd582628f4a9446004700c99fa779dddf6028",
+      "contentDigest": "svg-visual-sha256:7cbfa907d1e2874a0ab93141891dd582628f4a9446004700c99fa779dddf6028",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-7cbfa907.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:192",
+          "name": "Vector",
+          "width": 182,
+          "height": 150,
+          "x": 0,
+          "y": 6,
+          "rootX": 0,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:94cb6343180126b707d7c02afe2bbf10a9d9bd359d1b41b7888ccbd7ac77ced7",
+      "contentDigest": "svg-visual-sha256:94cb6343180126b707d7c02afe2bbf10a9d9bd359d1b41b7888ccbd7ac77ced7",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-94cb6343.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:182",
+          "name": "Vector",
+          "width": 154,
+          "height": 152,
+          "x": 1645,
+          "y": 3,
+          "rootX": 1645,
+          "rootY": 3,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:ee7cac3edbc1dadae42514aef9104dbfb88a3918a436b5efdf2f170eff33963f",
+      "contentDigest": "svg-visual-sha256:ee7cac3edbc1dadae42514aef9104dbfb88a3918a436b5efdf2f170eff33963f",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-ee7cac3e.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:187",
+          "name": "Vector",
+          "width": 154,
+          "height": 152,
+          "x": 884,
+          "y": 3,
+          "rootX": 884,
+          "rootY": 3,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:cb0744454ee4594ed5f5ae2f96d243ade8ad5bc87e761515fb8bcdb4c0768b7a",
+      "contentDigest": "svg-visual-sha256:cb0744454ee4594ed5f5ae2f96d243ade8ad5bc87e761515fb8bcdb4c0768b7a",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-cb074445.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:191",
+          "name": "Vector",
+          "width": 154,
+          "height": 152,
+          "x": 190,
+          "y": 3,
+          "rootX": 190,
+          "rootY": 3,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:7f448b698da352be29e342242a9a694e8b6b44abdb3d4c80dfe4745b3b7fb519",
+      "contentDigest": "svg-visual-sha256:7f448b698da352be29e342242a9a694e8b6b44abdb3d4c80dfe4745b3b7fb519",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-7f448b69.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:184",
+          "name": "Vector",
+          "width": 146,
+          "height": 151,
+          "x": 1349,
+          "y": 6,
+          "rootX": 1349,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:9966557c6c9b1ddf25c15c94726f6c9c6684c79ddd445fc2633068263b2d25fd",
+      "contentDigest": "svg-visual-sha256:9966557c6c9b1ddf25c15c94726f6c9c6684c79ddd445fc2633068263b2d25fd",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-9966557c.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:189",
+          "name": "Vector",
+          "width": 146,
+          "height": 151,
+          "x": 524,
+          "y": 6,
+          "rootX": 524,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:19c74b7060ada87e29806bc97fbd4d8e87df9342b457de149386f67d6932cbb0",
+      "contentDigest": "svg-visual-sha256:19c74b7060ada87e29806bc97fbd4d8e87df9342b457de149386f67d6932cbb0",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-19c74b70.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:186",
+          "name": "Vector",
+          "width": 133,
+          "height": 150,
+          "x": 1062,
+          "y": 6,
+          "rootX": 1062,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:c241d88104e8807e16296bce7d4a13add5fe3e4a59f1d4b83877fabac79262ce",
+      "contentDigest": "svg-visual-sha256:c241d88104e8807e16296bce7d4a13add5fe3e4a59f1d4b83877fabac79262ce",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-c241d881.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:190",
+          "name": "Vector",
+          "width": 133,
+          "height": 150,
+          "x": 369,
+          "y": 6,
+          "rootX": 369,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:bd5b31bd5122e9b980beccf8655b74d8da0467ef11689dabfac74f84bd3d2952",
+      "contentDigest": "svg-visual-sha256:bd5b31bd5122e9b980beccf8655b74d8da0467ef11689dabfac74f84bd3d2952",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-bd5b31bd.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:185",
+          "name": "Vector",
+          "width": 129,
+          "height": 150,
+          "x": 1211,
+          "y": 6,
+          "rootX": 1211,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    },
+    {
+      "sourceIdentity": "svg-content:f94bdd5472f6a09a8c667fc9162c0db1fba06a8e79d30364f865ce172c86de83",
+      "contentDigest": "svg-visual-sha256:f94bdd5472f6a09a8c667fc9162c0db1fba06a8e79d30364f865ce172c86de83",
+      "semanticLabel": "МАНУФАКТУРА",
+      "file": "asset-f94bdd54.svg",
+      "kind": "vector",
+      "placements": [
+        {
+          "nodeId": "286:183",
+          "name": "Vector",
+          "width": 122,
+          "height": 150,
+          "x": 1519,
+          "y": 6,
+          "rootX": 1519,
+          "rootY": 6,
+          "coordinateSpace": "export-root",
+          "rootId": "286:181",
+          "parent": "МАНУФАКТУРА",
+          "parentId": "286:181",
+          "absolutePosition": true,
+          "overhang": false
+        }
+      ]
+    }
+  ]
+}
